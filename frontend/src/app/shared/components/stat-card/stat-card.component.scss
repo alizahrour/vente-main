@@ -1,0 +1,26 @@
+.stat-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--card-accent);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  display: grid;
+  gap: 0.45rem;
+  min-height: 7.25rem;
+  padding: 1.15rem;
+}
+
+.label {
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.value {
+  color: var(--text-strong);
+  font-size: clamp(1.65rem, 3vw, 2.25rem);
+  font-weight: 850;
+  line-height: 1;
+}

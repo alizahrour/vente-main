@@ -1,0 +1,127 @@
+.invoice-page {
+  display: grid;
+  gap: 1rem;
+  max-width: 980px;
+}
+
+.invoice-actions {
+  align-items: center;
+  display: flex;
+  gap: 0.75rem;
+  justify-content: flex-end;
+}
+
+.invoice-document {
+  background: #ffffff;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  display: grid;
+  gap: 1.5rem;
+  padding: 1.5rem;
+}
+
+.invoice-header,
+.invoice-total {
+  align-items: flex-start;
+  display: flex;
+  gap: 1rem;
+  justify-content: space-between;
+}
+
+.invoice-header p:not(.eyebrow) {
+  color: var(--text-muted);
+  margin-top: 0.35rem;
+}
+
+.invoice-date {
+  color: var(--text-muted);
+  display: grid;
+  gap: 0.25rem;
+  text-align: right;
+}
+
+.invoice-date strong {
+  color: var(--text-strong);
+}
+
+.info-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: 1.3fr 1fr 1fr;
+}
+
+.info-grid section {
+  background: var(--surface-soft);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  display: grid;
+  gap: 0.35rem;
+  padding: 1rem;
+}
+
+.info-grid p {
+  color: var(--text-muted);
+}
+
+.info-grid strong {
+  color: var(--text-strong);
+}
+
+.row {
+  border-top: 1px solid #edf2f7;
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: 1.5fr 0.6fr 0.8fr 0.8fr;
+  min-width: 720px;
+  padding: 0.95rem 1rem;
+}
+
+.row:first-child {
+  border-top: 0;
+}
+
+.invoice-total {
+  border-top: 2px solid var(--primary);
+  color: var(--text-muted);
+  padding-top: 1rem;
+}
+
+.invoice-total strong {
+  color: var(--primary);
+  font-size: 1.5rem;
+}
+
+@media (max-width: 860px) {
+  .info-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .invoice-header,
+  .invoice-total,
+  .invoice-actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .invoice-date {
+    text-align: left;
+  }
+}
+
+@media print {
+  .invoice-actions,
+  app-topbar {
+    display: none !important;
+  }
+
+  .invoice-page {
+    max-width: none;
+  }
+
+  .invoice-document {
+    border: 0;
+    box-shadow: none;
+    padding: 0;
+  }
+}

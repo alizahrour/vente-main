@@ -1,0 +1,25 @@
+<section class="page">
+  <div class="page__header">
+    <div>
+      <p class="eyebrow">Catalogue</p>
+      <h1>{{ offerId ? 'Modifier l offre' : 'Nouvelle offre' }}</h1>
+    </div>
+    <a routerLink="/offers" class="ghost">Retour</a>
+  </div>
+
+  <form [formGroup]="form" (ngSubmit)="save()" class="form-grid">
+    <label>Code <input formControlName="code" /></label>
+    <label>Nom <input formControlName="name" /></label>
+    <label>Categorie
+      <select formControlName="category">
+        <option *ngFor="let category of categories" [value]="category">{{ category }}</option>
+      </select>
+    </label>
+    <label>Prix <input type="number" formControlName="price" /></label>
+    <label>Duree (jours) <input type="number" formControlName="duration" /></label>
+    <label class="check"><input type="checkbox" formControlName="active" /> Active</label>
+    <label class="wide">Description <textarea rows="3" formControlName="description"></textarea></label>
+    <p class="error wide" *ngIf="errorMessage">{{ errorMessage }}</p>
+    <div class="actions wide"><button type="submit" [disabled]="saving">Enregistrer</button></div>
+  </form>
+</section>

@@ -1,0 +1,64 @@
+<section class="invoice-page" *ngIf="invoice">
+  <div class="invoice-actions">
+    <a routerLink="/sales/history" class="ghost">Retour historique ventes</a>
+    <button type="button" (click)="print()">Imprimer</button>
+  </div>
+
+  <article class="invoice-document">
+    <header class="invoice-header">
+      <div>
+        <p class="eyebrow">Facture / recu</p>
+        <h1>{{ invoice.invoiceNumber }}</h1>
+        <p>Vente {{ invoice.saleNumber }}</p>
+      </div>
+      <div class="invoice-date">
+        <span>Date</span>
+        <strong>{{ invoice.generatedAt | date:'dd/MM/yyyy HH:mm' }}</strong>
+      </div>
+    </header>
+
+    <div class="info-grid">
+      <section>
+        <h2>Client</h2>
+        <p><strong>{{ invoice.customerName }}</strong></p>
+        <p>CIN: {{ invoice.customerCin }}</p>
+        <p>Telephone: {{ invoice.customerPhone }}</p>
+        <p *ngIf="invoice.customerEmail">Email: {{ invoice.customerEmail }}</p>
+        <p *ngIf="invoice.customerAddress">{{ invoice.customerAddress }}</p>
+        <p *ngIf="invoice.customerCity">{{ invoice.customerCity }}</p>
+      </section>
+
+      <section>
+        <h2>Agent commercial</h2>
+        <p><strong>{{ invoice.agentName }}</strong></p>
+        <p>Utilisateur: {{ invoice.agentUsername }}</p>
+      </section>
+
+      <section>
+        <h2>Paiement</h2>
+        <p>Mode: <strong>{{ invoice.method }}</strong></p>
+        <p>Reference: <strong>{{ invoice.paymentReference }}</strong></p>
+      </section>
+    </div>
+
+    <div class="table">
+      <div class="row row--head">
+        <span>Offre</span><span>Quantite</span><span>Prix unitaire</span><span>Total ligne</span>
+      </div>
+      <div class="row" *ngFor="let item of invoice.items">
+        <span><strong>{{ item.offerName }}</strong><small>{{ item.offerCode }}</small></span>
+        <span>{{ item.quantity }}</span>
+        <span>{{ item.unitPrice | number:'1.2-2' }} MAD</span>
+        <span>{{ item.totalPrice | number:'1.2-2' }} MAD</span>
+      </div>
+    </div>
+
+    <footer class="invoice-total">
+      <span>Montant total</span>
+      <strong>{{ invoice.totalAmount | number:'1.2-2' }} MAD</strong>
+    </footer>
+  </article>
+</section>
+
+<p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
+<p class="empty-state" *ngIf="loading">Generation de la facture...</p>

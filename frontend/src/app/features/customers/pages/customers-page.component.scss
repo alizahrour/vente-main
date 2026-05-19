@@ -1,0 +1,37 @@
+.toolbar {
+  align-items: center;
+  display: flex;
+  gap: 0.75rem;
+  padding: 1rem;
+}
+
+.toolbar input {
+  flex: 1;
+}
+
+.row {
+  align-items: center;
+  border-top: 1px solid #edf2f7;
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: 1.4fr 0.8fr 0.9fr 0.8fr 1fr;
+  min-width: 860px;
+  padding: 0.95rem 1rem;
+}
+
+.row:first-child {
+  border-top: 0;
+}
+
+.actions {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: flex-end;
+}
+
+@media (max-width: 860px) {
+  .toolbar {
+    align-items: stretch;
+    flex-direction: column;
+  }
+}

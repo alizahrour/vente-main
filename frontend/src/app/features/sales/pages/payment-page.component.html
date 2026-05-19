@@ -1,0 +1,21 @@
+<section class="page" *ngIf="sale">
+  <div class="page__header">
+    <div>
+      <p class="eyebrow">Paiement simule</p>
+      <h1>{{ sale.saleNumber }}</h1>
+    </div>
+    <a [routerLink]="['/sales', sale.id]" class="ghost">Retour vente</a>
+  </div>
+
+  <form [formGroup]="form" (ngSubmit)="pay()" class="panel payment-card">
+    <p>Total attendu: <strong>{{ sale.totalAmount | number:'1.2-2' }} MAD</strong></p>
+    <label>Montant <input type="number" formControlName="amount" readonly /></label>
+    <label>Methode
+      <select formControlName="method">
+        <option *ngFor="let method of methods" [value]="method">{{ method }}</option>
+      </select>
+    </label>
+    <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
+    <button type="submit">Enregistrer le paiement</button>
+  </form>
+</section>

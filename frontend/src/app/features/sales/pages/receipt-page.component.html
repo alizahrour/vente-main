@@ -1,0 +1,27 @@
+<section class="invoice" *ngIf="invoice">
+  <div class="invoice__header">
+    <div>
+      <p class="eyebrow">Facture / recu</p>
+      <h1>{{ invoice.invoiceNumber }}</h1>
+      <p>Vente {{ invoice.saleNumber }} | {{ invoice.customerName }}</p>
+    </div>
+    <button type="button" (click)="print()">Imprimer</button>
+  </div>
+
+  <div class="table">
+    <div class="row row--head"><span>Offre</span><span>Qte</span><span>Prix</span><span>Total</span></div>
+    <div class="row" *ngFor="let item of invoice.items">
+      <span>{{ item.offerName }}</span>
+      <span>{{ item.quantity }}</span>
+      <span>{{ item.unitPrice | number:'1.2-2' }}</span>
+      <span>{{ item.totalPrice | number:'1.2-2' }}</span>
+    </div>
+  </div>
+
+  <div class="total">
+    <span>Methode: {{ invoice.method }}</span>
+    <strong>{{ invoice.totalAmount | number:'1.2-2' }} MAD</strong>
+  </div>
+</section>
+<p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
+<p class="empty-state" *ngIf="loading">Chargement...</p>

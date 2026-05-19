@@ -1,0 +1,43 @@
+<aside class="sidebar">
+  <div class="brand">
+    <span class="brand-mark">VT</span>
+    <div>
+      <span class="eyebrow">Vente directe</span>
+      <strong>Telecom</strong>
+    </div>
+  </div>
+
+  <nav class="menu" aria-label="Navigation principale">
+    <a *ngIf="authService.hasRole('ADMIN', 'SUPERVISOR', 'AGENT')" routerLink="/dashboard" routerLinkActive="is-active">
+      <span>Tableau de bord</span>
+    </a>
+    <a *ngIf="authService.hasRole('ADMIN', 'AGENT')" routerLink="/customers" routerLinkActive="is-active">
+      <span>Clients</span>
+    </a>
+    <a *ngIf="authService.hasRole('ADMIN', 'AGENT')" routerLink="/offers" routerLinkActive="is-active">
+      <span>Catalogue offres</span>
+    </a>
+    <a *ngIf="authService.hasRole('ADMIN', 'AGENT')" routerLink="/sales/new" routerLinkActive="is-active">
+      <span>Creer une vente</span>
+    </a>
+    <a routerLink="/sales/history" routerLinkActive="is-active">
+      <span>Historique ventes</span>
+    </a>
+  </nav>
+</aside>
+
+<header class="app-header">
+  <div>
+    <span class="header-kicker">Plateforme commerciale</span>
+    <strong>Gestion de vente directe telecom</strong>
+  </div>
+
+  <div class="user-panel" *ngIf="authService.currentUser$ | async as user">
+    <span class="avatar">{{ user.fullName.charAt(0) }}</span>
+    <div>
+      <strong>{{ user.fullName }}</strong>
+      <span>{{ user.role }}</span>
+    </div>
+    <button type="button" class="ghost-button" (click)="logout()">Se deconnecter</button>
+  </div>
+</header>

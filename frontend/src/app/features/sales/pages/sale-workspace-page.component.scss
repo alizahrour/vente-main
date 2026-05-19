@@ -1,0 +1,12 @@
+.sale-start {
+  display: grid;
+  gap: 1rem;
+  max-width: 640px;
+}
+
+.hint {
+  background: var(--primary-soft);
+  border-radius: var(--radius);
+  color: var(--primary);
+  padding: 0.85rem 1rem;
+}

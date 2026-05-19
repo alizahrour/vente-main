@@ -1,0 +1,30 @@
+<section class="page">
+  <div class="page__header">
+    <div>
+      <p class="eyebrow">Catalogue commercial</p>
+      <h1>Offres telecom</h1>
+    </div>
+    <a *ngIf="authService.isAdmin()" routerLink="/offers/new" class="primary">Nouvelle offre</a>
+  </div>
+
+  <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
+  <p class="empty-state" *ngIf="loading">Chargement...</p>
+
+  <div class="grid" *ngIf="!loading">
+    <article class="offer" *ngFor="let offer of offers">
+      <div class="offer__top">
+        <strong>{{ offer.name }}</strong>
+        <span [class.off]="!offer.active">{{ offer.active ? 'Active' : 'Inactive' }}</span>
+      </div>
+      <p>{{ offer.code }} | {{ offer.category }} | {{ offer.duration }} jours</p>
+      <p class="desc">{{ offer.description || 'Aucune description' }}</p>
+      <div class="offer__bottom">
+        <strong>{{ offer.price | number:'1.2-2' }} MAD</strong>
+        <span class="actions" *ngIf="authService.isAdmin()">
+          <a [routerLink]="['/offers', offer.id, 'edit']">Modifier</a>
+          <button type="button" (click)="toggleOffer(offer)">{{ offer.active ? 'Desactiver' : 'Activer' }}</button>
+        </span>
+      </div>
+    </article>
+  </div>
+</section>

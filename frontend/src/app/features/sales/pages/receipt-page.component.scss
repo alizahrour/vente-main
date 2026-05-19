@@ -1,0 +1,55 @@
+.invoice {
+  display: grid;
+  gap: 1.5rem;
+  max-width: 900px;
+}
+
+.invoice__header,
+.total {
+  align-items: center;
+  display: flex;
+  gap: 1rem;
+  justify-content: space-between;
+}
+
+.invoice__header p:not(.eyebrow) {
+  color: var(--text-muted);
+  margin-top: 0.35rem;
+}
+
+.row {
+  border-top: 1px solid #edf2f7;
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: 1.6fr 0.4fr 0.7fr 0.7fr;
+  min-width: 650px;
+  padding: 0.95rem 1rem;
+}
+
+.row:first-child {
+  border-top: 0;
+}
+
+.total {
+  border-top: 2px solid var(--primary);
+  padding-top: 1rem;
+}
+
+.total span {
+  color: var(--text-muted);
+}
+
+.total strong {
+  color: var(--primary);
+  font-size: 1.35rem;
+}
+
+@media print {
+  .invoice {
+    box-shadow: none;
+  }
+
+  button {
+    display: none;
+  }
+}

@@ -1,0 +1,22 @@
+.shell {
+  display: grid;
+  grid-template-columns: 280px minmax(0, 1fr);
+  grid-template-rows: auto 1fr;
+  min-height: 100vh;
+}
+
+.shell-content {
+  min-height: calc(100vh - 76px);
+  padding: 1.5rem;
+}
+
+@media (max-width: 980px) {
+  .shell {
+    grid-template-columns: 1fr;
+  }
+
+  .shell-content {
+    min-height: auto;
+    padding: 1rem;
+  }
+}

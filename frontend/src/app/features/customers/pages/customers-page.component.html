@@ -1,0 +1,33 @@
+<section class="page">
+  <div class="page__header">
+    <div>
+      <p class="eyebrow">Portefeuille commercial</p>
+      <h1>Clients</h1>
+    </div>
+    <a routerLink="/customers/new" class="primary">Nouveau client</a>
+  </div>
+
+  <div class="toolbar panel">
+    <input [(ngModel)]="keyword" (keyup.enter)="search()" placeholder="Nom, CIN, telephone..." />
+    <button type="button" (click)="search()">Rechercher</button>
+  </div>
+
+  <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
+  <p class="empty-state" *ngIf="loading">Chargement...</p>
+
+  <div class="table" *ngIf="!loading">
+    <div class="row row--head">
+      <span>Client</span><span>CIN</span><span>Telephone</span><span>Ville</span><span>Actions</span>
+    </div>
+    <div class="row" *ngFor="let customer of customers">
+      <span><strong>{{ customer.fullName }}</strong><small>{{ customer.email || 'Aucun email' }}</small></span>
+      <span>{{ customer.cin }}</span>
+      <span>{{ customer.phone }}</span>
+      <span>{{ customer.city || '-' }}</span>
+      <span class="actions">
+        <a [routerLink]="['/customers', customer.id, 'edit']">Modifier</a>
+        <button type="button" (click)="deleteCustomer(customer)">Supprimer</button>
+      </span>
+    </div>
+  </div>
+</section>

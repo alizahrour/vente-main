@@ -1,0 +1,23 @@
+<section class="page">
+  <div class="page__header">
+    <div>
+      <p class="eyebrow">Nouvelle vente directe</p>
+      <h1>Creer une vente</h1>
+    </div>
+    <a routerLink="/sales/history" class="ghost">Historique</a>
+  </div>
+
+  <form [formGroup]="form" (ngSubmit)="createSale()" class="panel sale-start">
+    <label>Client existant
+      <select formControlName="customerId">
+        <option [ngValue]="null">Selectionner un client</option>
+        <option *ngFor="let customer of customers" [ngValue]="customer.id">
+          {{ customer.fullName }} - {{ customer.phone }}
+        </option>
+      </select>
+    </label>
+    <p class="hint">La vente sera creee en brouillon. Ajoute ensuite les offres dans le panier.</p>
+    <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
+    <button type="submit" [disabled]="saving">Creer la vente</button>
+  </form>
+</section>

@@ -1,0 +1,19 @@
+.payment-card {
+  display: grid;
+  gap: 1rem;
+  max-width: 540px;
+}
+
+.payment-card > p:first-child {
+  align-items: center;
+  background: var(--primary-soft);
+  border-radius: var(--radius);
+  color: var(--primary);
+  display: flex;
+  justify-content: space-between;
+  padding: 0.9rem 1rem;
+}
+
+.payment-card strong {
+  font-size: 1.15rem;
+}

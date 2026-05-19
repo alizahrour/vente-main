@@ -1,0 +1,78 @@
+<section class="page">
+  <header class="page-header">
+    <div>
+      <span class="section-kicker">Pilotage commercial</span>
+      <h1>Dashboard commercial</h1>
+    </div>
+    <button type="button" class="ghost-button" (click)="loadDashboard()">Actualiser</button>
+  </header>
+
+  <p class="form-error" *ngIf="errorMessage">{{ errorMessage }}</p>
+  <p class="empty-state" *ngIf="loading">Chargement du dashboard...</p>
+
+  <div class="stat-grid" *ngIf="dashboard as data">
+    <app-stat-card label="Ventes totales" [value]="data.totalSales.toString()" accent="#0f3a66"></app-stat-card>
+    <app-stat-card label="Chiffre d'affaires" [value]="formatCurrency(data.totalRevenue)" accent="#1769e0"></app-stat-card>
+    <app-stat-card label="Ventes payees" [value]="data.paidSales.toString()" accent="#039855"></app-stat-card>
+    <app-stat-card label="Ventes annulees" [value]="data.cancelledSales.toString()" accent="#b42318"></app-stat-card>
+    <app-stat-card label="Ventes validees" [value]="data.validatedSales.toString()" accent="#7a5af8"></app-stat-card>
+    <app-stat-card label="Brouillons" [value]="data.draftSales.toString()" accent="#f79009"></app-stat-card>
+  </div>
+
+  <div class="dashboard-grid" *ngIf="!loading">
+    <section class="panel chart-panel">
+      <h2>Chiffre d'affaires par mois</h2>
+      <canvas #revenueChart></canvas>
+      <p class="empty-state" *ngIf="!revenueByMonth.length">Aucune vente validee ou payee.</p>
+    </section>
+
+    <section class="panel chart-panel">
+      <h2>Ventes par agent</h2>
+      <canvas #agentChart></canvas>
+      <p class="empty-state" *ngIf="!salesByAgent.length">Aucune vente par agent.</p>
+    </section>
+  </div>
+
+  <div class="dashboard-grid compact-grid" *ngIf="!loading">
+    <section class="panel">
+      <h2>Top offres vendues</h2>
+      <p *ngFor="let item of salesByOffer"><span>{{ item.label }}</span><strong>{{ item.value }}</strong></p>
+      <p class="empty-state" *ngIf="!salesByOffer.length">Aucune offre vendue.</p>
+    </section>
+
+    <section class="panel">
+      <h2>Ventes par agent</h2>
+      <p *ngFor="let item of salesByAgent"><span>{{ item.label }}</span><strong>{{ item.value }}</strong></p>
+      <p class="empty-state" *ngIf="!salesByAgent.length">Aucune vente enregistree.</p>
+    </section>
+  </div>
+
+  <section class="panel" *ngIf="dashboard as data">
+    <h2>Dernieres ventes</h2>
+    <div class="data-table" *ngIf="data.recentSales.length">
+      <table>
+        <thead>
+          <tr>
+            <th>Vente</th>
+            <th>Client</th>
+            <th>Agent</th>
+            <th>Montant</th>
+            <th>Statut</th>
+            <th>Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let sale of data.recentSales">
+            <td>{{ sale.saleNumber }}</td>
+            <td>{{ sale.customerName }}</td>
+            <td>{{ sale.agentName }}</td>
+            <td>{{ sale.totalAmount | currency:'MAD':'symbol':'1.2-2' }}</td>
+            <td><span class="status-pill warning">{{ sale.status }}</span></td>
+            <td>{{ sale.createdAt | date:'dd/MM/yyyy HH:mm' }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="empty-state" *ngIf="!data.recentSales.length">Aucune vente recente.</p>
+  </section>
+</section>

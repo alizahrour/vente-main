@@ -1,0 +1,24 @@
+.row {
+  align-items: center;
+  border-top: 1px solid #edf2f7;
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: 1fr 1.2fr 0.8fr 0.8fr 0.5fr;
+  min-width: 780px;
+  padding: 0.95rem 1rem;
+}
+
+.row:first-child {
+  border-top: 0;
+}
+
+.row a {
+  background: var(--primary);
+  border-radius: var(--radius);
+  color: #ffffff;
+  display: inline-flex;
+  font-weight: 750;
+  min-height: 2.4rem;
+  padding: 0.55rem 0.85rem;
+  text-decoration: none;
+}

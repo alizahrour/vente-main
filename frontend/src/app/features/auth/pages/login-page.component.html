@@ -1,0 +1,44 @@
+<section class="login-page">
+  <div class="login-hero">
+    <span class="eyebrow">MVP academique</span>
+    <h1>Vente directe telecom</h1>
+    <p>
+      Une interface commerciale pour gerer les clients, consulter les offres, preparer un devis,
+      valider une vente, simuler le paiement et generer un recu.
+    </p>
+
+    <div class="credential-cards">
+      <button type="button" class="credential-card" (click)="quickLogin('agent', 'agent123')">
+        <span>Compte agent</span>
+        <strong>agent / agent123</strong>
+      </button>
+      <button type="button" class="credential-card" (click)="quickLogin('admin', 'admin123')">
+        <span>Compte admin</span>
+        <strong>admin / admin123</strong>
+      </button>
+    </div>
+  </div>
+
+  <form class="panel login-form" [formGroup]="form" (ngSubmit)="submit()">
+    <div class="page-intro">
+      <span class="section-kicker">Connexion</span>
+      <h2>Acces a la plateforme</h2>
+    </div>
+
+    <label class="field">
+      <span>Nom d'utilisateur</span>
+      <input type="text" formControlName="username" placeholder="agent" />
+    </label>
+
+    <label class="field">
+      <span>Mot de passe</span>
+      <input type="password" formControlName="password" placeholder="agent123" />
+    </label>
+
+    <p class="form-error" *ngIf="errorMessage">{{ errorMessage }}</p>
+
+    <button type="submit" class="primary-button wide-button" [disabled]="submitting">
+      {{ submitting ? 'Connexion...' : 'Se connecter' }}
+    </button>
+  </form>
+</section>

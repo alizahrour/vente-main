@@ -1,0 +1,23 @@
+<section class="page">
+  <div class="page__header">
+    <div>
+      <p class="eyebrow">Clients</p>
+      <h1>{{ customerId ? 'Modifier le client' : 'Nouveau client' }}</h1>
+    </div>
+    <a routerLink="/customers" class="ghost">Retour</a>
+  </div>
+
+  <form [formGroup]="form" (ngSubmit)="save()" class="form-grid">
+    <label>Prenom <input formControlName="firstName" /></label>
+    <label>Nom <input formControlName="lastName" /></label>
+    <label>CIN <input formControlName="cin" /></label>
+    <label>Telephone <input formControlName="phone" /></label>
+    <label>Email <input formControlName="email" type="email" /></label>
+    <label>Ville <input formControlName="city" /></label>
+    <label class="wide">Adresse <textarea formControlName="address" rows="3"></textarea></label>
+    <p class="error wide" *ngIf="errorMessage">{{ errorMessage }}</p>
+    <div class="actions wide">
+      <button type="submit" [disabled]="saving">{{ saving ? 'Enregistrement...' : 'Enregistrer' }}</button>
+    </div>
+  </form>
+</section>

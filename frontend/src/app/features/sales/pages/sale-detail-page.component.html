@@ -1,0 +1,44 @@
+<section class="page" *ngIf="sale">
+  <div class="page__header">
+    <div>
+      <p class="eyebrow">Vente {{ sale.saleNumber }}</p>
+      <h1>{{ sale.customerName }}</h1>
+    </div>
+    <span class="status">{{ sale.status }}</span>
+  </div>
+
+  <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
+  <p class="success" *ngIf="successMessage">{{ successMessage }}</p>
+
+  <form class="add-line panel" [formGroup]="itemForm" (ngSubmit)="addItem()" *ngIf="!locked">
+    <select formControlName="offerId">
+      <option [ngValue]="0">Choisir une offre</option>
+      <option *ngFor="let offer of offers" [ngValue]="offer.id">{{ offer.name }} - {{ offer.price }} MAD</option>
+    </select>
+    <input type="number" min="1" formControlName="quantity" />
+    <button type="submit">Ajouter</button>
+  </form>
+
+  <div class="table">
+    <div class="row row--head"><span>Offre</span><span>Prix</span><span>Qte</span><span>Total</span><span>Action</span></div>
+    <div class="row" *ngFor="let item of sale.items">
+      <span>{{ item.offerName }}<small>{{ item.offerCode }}</small></span>
+      <span>{{ item.unitPrice | number:'1.2-2' }}</span>
+      <span>{{ item.quantity }}</span>
+      <span>{{ item.totalPrice | number:'1.2-2' }}</span>
+      <span><button *ngIf="!locked" type="button" class="ghost" (click)="removeItem(item.id)">Retirer</button></span>
+    </div>
+  </div>
+
+  <div class="summary panel">
+    <strong>Total: {{ sale.totalAmount | number:'1.2-2' }} MAD</strong>
+    <button type="button" *ngIf="sale.status === 'DRAFT'" (click)="validate()">Valider</button>
+    <button type="button" *ngIf="sale.status === 'VALIDATED'" (click)="goPayment()">Paiement</button>
+    <a *ngIf="sale.status === 'PAID'" [routerLink]="['/sales', sale.id, 'invoice']">Facture</a>
+  </div>
+
+  <form class="cancel panel" [formGroup]="cancelForm" (ngSubmit)="cancel()" *ngIf="sale.status === 'DRAFT' || sale.status === 'VALIDATED'">
+    <input formControlName="reason" placeholder="Motif d'annulation" />
+    <button type="submit">Annuler la vente</button>
+  </form>
+</section>

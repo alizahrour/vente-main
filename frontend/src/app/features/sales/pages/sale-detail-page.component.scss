@@ -1,0 +1,57 @@
+.add-line,
+.summary,
+.cancel {
+  align-items: center;
+  display: flex;
+  gap: 0.75rem;
+  justify-content: space-between;
+}
+
+.add-line select,
+.cancel input {
+  flex: 1;
+}
+
+.add-line input {
+  max-width: 130px;
+}
+
+.row {
+  align-items: center;
+  border-top: 1px solid #edf2f7;
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: 1.5fr 0.7fr 0.5fr 0.7fr 0.7fr;
+  min-width: 760px;
+  padding: 0.95rem 1rem;
+}
+
+.row:first-child {
+  border-top: 0;
+}
+
+.summary strong {
+  color: var(--primary);
+  font-size: 1.2rem;
+}
+
+.cancel button {
+  background: var(--danger);
+}
+
+.cancel button:hover {
+  background: #8f1d14;
+}
+
+@media (max-width: 780px) {
+  .add-line,
+  .summary,
+  .cancel {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .add-line input {
+    max-width: none;
+  }
+}
