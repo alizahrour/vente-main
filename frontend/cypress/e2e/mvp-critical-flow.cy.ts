@@ -1,127 +1,89 @@
-describe('MVP vente directe telecom - parcours critique', () => {
+describe('Parcours vente directe - recherche client vers paiement', () => {
   const testRun = Date.now();
   const customer = {
     id: 9001,
-    firstName: 'E2E',
-    lastName: `Client ${testRun}`,
-    fullName: `E2E Client ${testRun}`,
-    cin: `E2E${testRun}`,
+    firstName: 'Ali',
+    lastName: `Credit ${testRun}`,
+    fullName: `Ali Credit ${testRun}`,
+    cin: `AZ${String(testRun).slice(-5)}`,
     phone: `060${String(testRun).slice(-7)}`,
-    email: `e2e.${testRun}@example.com`,
-    address: 'Adresse test E2E',
-    city: 'Casablanca',
+    email: `alicredit.${testRun}@example.com`,
+    address: 'AZAHRAE',
+    city: 'SALE LAYAYDA',
   };
 
   const offer = {
     id: 3001,
-    code: 'FIBRE-E2E',
-    name: 'Fibre Pro E2E',
-    category: 'FIBRE',
-    description: 'Offre fibre de test',
-    price: 299,
+    code: 'RECHARGE-100',
+    name: 'RECHARGE MOBILE 100DH',
+    category: 'RECHARGE',
+    description: 'RECHARGE MOBILE 100DH',
+    price: 83.33,
     duration: 30,
     active: true,
   };
 
-  let customerCreated = false;
   let saleState = buildSale('DRAFT', [], 0);
 
   beforeEach(() => {
-    customerCreated = false;
     saleState = buildSale('DRAFT', [], 0);
     cy.clearLocalStorage();
     registerApiMocks();
   });
 
-  it('valide le parcours agent complet de la creation client au dashboard', () => {
+  it('cree un panier client, ajoute un produit, valide le devis et paie la facture', () => {
     cy.visit('/login');
     cy.get('input[formControlName="username"]').clear().type('agent');
     cy.get('input[formControlName="password"]').clear().type('agent123');
     cy.contains('button', 'Se connecter').click();
 
     cy.location('pathname').should('eq', '/sales/new');
-    cy.contains('Agent E2E').should('be.visible');
+    cy.contains('Recherche clients').should('be.visible');
 
-    cy.contains('a', 'Clients').click();
-    cy.location('pathname').should('eq', '/customers');
-    cy.contains('a', 'Nouveau client').click();
-    cy.location('pathname').should('eq', '/customers/new');
-
-    cy.get('input[formControlName="firstName"]').type(customer.firstName);
-    cy.get('input[formControlName="lastName"]').type(customer.lastName);
-    cy.get('input[formControlName="cin"]').type(customer.cin);
-    cy.get('input[formControlName="phone"]').type(customer.phone);
-    cy.get('input[formControlName="email"]').type(customer.email);
-    cy.get('input[formControlName="city"]').type(customer.city);
-    cy.get('textarea[formControlName="address"]').type(customer.address);
-    cy.contains('button', 'Enregistrer').click();
-
-    cy.location('pathname').should('eq', '/customers');
-    cy.wait('@createCustomer');
-    cy.contains(customer.fullName).should('be.visible');
-
-    cy.get('input[placeholder*="Nom"]').clear().type(customer.cin);
+    cy.get('input[formControlName="identityNumber"]').type(customer.cin);
     cy.contains('button', 'Rechercher').click();
     cy.wait('@searchCustomer');
-    cy.contains(customer.fullName).should('be.visible');
-    cy.contains(customer.phone).should('be.visible');
+    cy.contains(customer.fullName).click();
 
-    cy.contains('a', 'Catalogue offres').click();
-    cy.location('pathname').should('eq', '/offers');
-    cy.wait('@getOffers');
-    cy.contains(offer.name).should('be.visible');
-    cy.contains('Active').should('be.visible');
-
-    cy.contains('a', 'Creer une vente').click();
-    cy.location('pathname').should('eq', '/sales/new');
-    cy.get('select[formControlName="customerId"]').select(`${customer.fullName} - ${customer.phone}`);
-    cy.contains('button', 'Creer la vente').click();
+    cy.contains('Vue d').should('be.visible');
+    cy.contains('Nouveau panier').click();
+    cy.contains('Entrez les details du devis').should('be.visible');
+    cy.get('select[formControlName="creditDuration"]').select('12 Mois');
+    cy.contains('button', 'Continuer').click();
     cy.wait('@createSale');
+
     cy.location('pathname').should('eq', '/sales/7001');
-
-    cy.get('select[formControlName="offerId"]').select(`${offer.name} - ${offer.price} MAD`);
-    cy.get('input[formControlName="quantity"]').clear().type('2');
-    cy.contains('button', 'Ajouter').click();
+    cy.wait('@getActiveOffers');
+    cy.contains('Parcourir les produits').should('be.visible');
+    cy.contains(offer.name).click();
+    cy.contains('Ajouter au devis').click();
     cy.wait('@addSaleItem');
+    cy.contains('Produit ajoute au devis').should('be.visible');
+
+    cy.contains('button', 'Voir le devis').click();
+    cy.contains('Resume du devis').should('be.visible');
     cy.contains(offer.name).should('be.visible');
-    cy.contains('598.00').should('be.visible');
-    cy.contains('Total: 598.00 MAD').should('be.visible');
-
-    cy.contains('button', 'Valider').click();
+    cy.contains('Dhs83.33').should('be.visible');
+    cy.contains('button', 'Passer la commande').click();
     cy.wait('@validateSale');
-    cy.contains('VALIDATED').should('be.visible');
 
-    cy.contains('button', 'Paiement').click();
     cy.location('pathname').should('eq', '/sales/7001/payment');
-    cy.get('input[formControlName="amount"]').should('have.value', '598').and('have.attr', 'readonly');
-    cy.get('select[formControlName="method"]').select('CARD');
-    cy.contains('button', 'Enregistrer le paiement').click();
+    cy.contains('Paiement').should('be.visible');
+    cy.get('input[formControlName="amount"]').should('have.value', '83.33');
+    cy.contains('button', 'Ajouter le paiement').click();
     cy.wait('@paySale');
-
-    cy.location('pathname').should('eq', '/sales/7001/invoice');
+    cy.contains('Montant total paye').should('be.visible');
+    cy.contains('button', 'Payer la facture').should('not.be.disabled').click();
     cy.wait('@generateInvoice');
-    cy.contains('INV-E2E-001').should('be.visible');
-    cy.contains('SALE-E2E-001').should('be.visible');
-    cy.contains(customer.fullName).should('be.visible');
-    cy.contains('Agent E2E').should('be.visible');
-    cy.contains('PAY-E2E-001').should('be.visible');
-    cy.contains('598.00 MAD').should('be.visible');
-    cy.contains('button', 'Imprimer').should('be.visible');
 
-    cy.contains('a', 'Retour historique ventes').click();
+    cy.contains('Succes de la soumission').should('be.visible');
+    cy.contains('SALE-E2E-001').should('be.visible');
+    cy.contains("D'accord").click();
+
     cy.location('pathname').should('eq', '/sales/history');
     cy.wait('@getSalesHistory');
     cy.contains('SALE-E2E-001').should('be.visible');
-    cy.contains(customer.fullName).should('be.visible');
     cy.contains('PAID').should('be.visible');
-
-    cy.contains('a', 'Tableau de bord').click();
-    cy.location('pathname').should('eq', '/dashboard');
-    cy.wait('@getDashboard');
-    cy.contains('Dashboard commercial').should('be.visible');
-    cy.contains('Ventes payees').should('be.visible');
-    cy.contains('598').should('be.visible');
-    cy.contains(offer.name).should('be.visible');
   });
 
   function registerApiMocks(): void {
@@ -132,29 +94,13 @@ describe('MVP vente directe telecom - parcours critique', () => {
       role: 'AGENT',
     }).as('login');
 
-    cy.intercept('GET', '**/api/customers', (req) => {
-      req.reply(customerCreated ? [customer] : []);
-    }).as('getCustomers');
-
-    cy.intercept('POST', '**/api/customers', (req) => {
-      expect(req.body).to.include({
-        firstName: customer.firstName,
-        lastName: customer.lastName,
-        cin: customer.cin,
-        phone: customer.phone,
-      });
-      customerCreated = true;
-      req.reply(customer);
-    }).as('createCustomer');
-
+    cy.intercept('GET', '**/api/customers', [customer]).as('getCustomers');
     cy.intercept('GET', '**/api/customers/search*', (req) => {
       expect(req.query['keyword']).to.eq(customer.cin);
       req.reply([customer]);
     }).as('searchCustomer');
 
     cy.intercept('GET', '**/api/offers/active', [offer]).as('getActiveOffers');
-    cy.intercept('GET', '**/api/offers?*', [offer]).as('getOffers');
-    cy.intercept('GET', '**/api/offers', [offer]).as('getOffersNoQuery');
 
     cy.intercept('POST', '**/api/sales', (req) => {
       expect(req.body).to.deep.eq({ customerId: customer.id, items: [] });
@@ -167,17 +113,16 @@ describe('MVP vente directe telecom - parcours critique', () => {
     }).as('getSale');
 
     cy.intercept('POST', '**/api/sales/7001/items', (req) => {
-      expect(req.body).to.deep.eq({ offerId: offer.id, quantity: 2 });
-      const item = {
+      expect(req.body).to.deep.eq({ offerId: offer.id, quantity: 1 });
+      saleState = buildSale('DRAFT', [{
         id: 1,
         offerId: offer.id,
         offerCode: offer.code,
         offerName: offer.name,
         unitPrice: offer.price,
-        quantity: 2,
-        totalPrice: 598,
-      };
-      saleState = buildSale('DRAFT', [item], 598);
+        quantity: 1,
+        totalPrice: offer.price,
+      }], offer.price);
       req.reply(saleState);
     }).as('addSaleItem');
 
@@ -187,13 +132,13 @@ describe('MVP vente directe telecom - parcours critique', () => {
     }).as('validateSale');
 
     cy.intercept('POST', '**/api/sales/7001/payment', (req) => {
-      expect(req.body).to.deep.eq({ amount: 598, method: 'CARD' });
+      expect(req.body).to.deep.eq({ amount: offer.price, method: 'CASH' });
       saleState = { ...saleState, status: 'PAID', paid: true };
       req.reply({
         id: 1,
         saleId: 7001,
-        amount: 598,
-        method: 'CARD',
+        amount: offer.price,
+        method: 'CASH',
         status: 'PAID',
         paidAt: '2026-05-16T10:15:00',
         reference: 'PAY-E2E-001',
@@ -215,8 +160,8 @@ describe('MVP vente directe telecom - parcours critique', () => {
         customerCity: customer.city,
         agentName: 'Agent E2E',
         agentUsername: 'agent',
-        totalAmount: 598,
-        method: 'CARD',
+        totalAmount: offer.price,
+        method: 'CASH',
         paymentReference: 'PAY-E2E-001',
         items: saleState.items,
       });
@@ -225,29 +170,6 @@ describe('MVP vente directe telecom - parcours critique', () => {
     cy.intercept('GET', '**/api/sales', (req) => {
       req.reply([saleState]);
     }).as('getSalesHistory');
-
-    cy.intercept('GET', '**/api/dashboard/summary', {
-      totalCustomers: 1,
-      totalOffers: 1,
-      totalSales: 1,
-      draftSales: 0,
-      validatedSales: 0,
-      paidSales: 1,
-      cancelledSales: 0,
-      totalRevenue: 598,
-      recentSales: [{
-        saleId: 7001,
-        saleNumber: 'SALE-E2E-001',
-        customerName: customer.fullName,
-        agentName: 'Agent E2E',
-        totalAmount: 598,
-        status: 'PAID',
-        createdAt: '2026-05-16T10:00:00',
-      }],
-    }).as('getDashboard');
-    cy.intercept('GET', '**/api/dashboard/sales-by-offer', [{ label: offer.name, value: 2 }]).as('salesByOffer');
-    cy.intercept('GET', '**/api/dashboard/sales-by-agent', [{ label: 'Agent E2E', value: 1 }]).as('salesByAgent');
-    cy.intercept('GET', '**/api/dashboard/revenue-by-month', [{ label: '2026-05', value: 598 }]).as('revenueByMonth');
   }
 
   function buildSale(status: 'DRAFT' | 'VALIDATED' | 'PAID', items: unknown[], totalAmount: number) {

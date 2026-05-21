@@ -1,44 +1,119 @@
-<section class="page" *ngIf="sale">
-  <div class="page__header">
-    <div>
-      <p class="eyebrow">Vente {{ sale.saleNumber }}</p>
-      <h1>{{ sale.customerName }}</h1>
+<section class="catalog-page" *ngIf="sale">
+  <header class="catalog-header">
+    <div class="brand-line">
+      <span class="logo">maroc<br />telecom</span>
+      <strong>Portail Entreprise Unifie</strong>
     </div>
-    <span class="status">{{ sale.status }}</span>
+    <span>superuser / TEMAARA MASSIRA</span>
+  </header>
+
+  <div class="context-bar">
+    <button type="button" class="hamburger" (click)="backToCatalog()">☰</button>
+    <strong *ngIf="viewMode === 'catalog'">Parcourir les produits pour: {{ sale.customerName }}</strong>
+    <strong *ngIf="viewMode !== 'catalog'">{{ selectedOffer?.name || 'Citation' }} : {{ sale.customerName }}</strong>
   </div>
 
   <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
   <p class="success" *ngIf="successMessage">{{ successMessage }}</p>
 
-  <form class="add-line panel" [formGroup]="itemForm" (ngSubmit)="addItem()" *ngIf="!locked">
-    <select formControlName="offerId">
-      <option [ngValue]="0">Choisir une offre</option>
-      <option *ngFor="let offer of offers" [ngValue]="offer.id">{{ offer.name }} - {{ offer.price }} MAD</option>
-    </select>
-    <input type="number" min="1" formControlName="quantity" />
-    <button type="submit">Ajouter</button>
-  </form>
+  <main class="catalog-shell" *ngIf="viewMode === 'catalog'">
+    <aside class="filters">
+      <div class="filter-head"><span>Filtres</span><button type="button">Reinitialiser</button></div>
+      <p>Les categories</p>
+      <section *ngFor="let category of categories">
+        <h3>{{ category.label }}</h3>
+        <button type="button" *ngFor="let child of category.children" [class.active]="selectedCategory === child.toUpperCase()" (click)="selectCategory(child)">
+          {{ child }}
+        </button>
+      </section>
+    </aside>
 
-  <div class="table">
-    <div class="row row--head"><span>Offre</span><span>Prix</span><span>Qte</span><span>Total</span><span>Action</span></div>
-    <div class="row" *ngFor="let item of sale.items">
-      <span>{{ item.offerName }}<small>{{ item.offerCode }}</small></span>
-      <span>{{ item.unitPrice | number:'1.2-2' }}</span>
-      <span>{{ item.quantity }}</span>
-      <span>{{ item.totalPrice | number:'1.2-2' }}</span>
-      <span><button *ngIf="!locked" type="button" class="ghost" (click)="removeItem(item.id)">Retirer</button></span>
+    <section class="product-area">
+      <input class="search-product" placeholder="Recherche par nom de produit" />
+      <p>{{ visibleOffers.length }} Resultat(s) trouves</p>
+      <div class="product-grid">
+        <article class="product-card" *ngFor="let offer of visibleOffers">
+          <button type="button" class="product-body" (click)="openProduct(offer)">
+            <span class="cube-icon"></span>
+            <strong>{{ offer.name }}</strong>
+            <small>{{ offer.description || offer.code }}</small>
+          </button>
+          <span class="price">Dhs {{ offer.price | number:'1.2-2' }}</span>
+          <button type="button" class="add-icon" (click)="openProduct(offer)">+</button>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <main class="product-shell" *ngIf="viewMode === 'product' && selectedOffer">
+    <aside class="product-menu">
+      <strong>{{ selectedOffer.name }}</strong>
+    </aside>
+    <section class="product-detail">
+      <div>
+        <h1>{{ selectedOffer.name }}</h1>
+        <p>{{ selectedOffer.description || selectedOffer.code }}</p>
+        <p><strong>Partant de:</strong> Dhs {{ selectedOffer.price | number:'1.2-2' }}</p>
+        <p class="stock">ⓘ -- Unites disponibles en stock</p>
+        <button type="button" (click)="addSelectedOffer()" [disabled]="locked">Ajouter au devis</button>
+      </div>
+      <span class="big-cube"></span>
+    </section>
+    <section class="configuration" *ngIf="sale.items.length">
+      <div class="qty-box" [formGroup]="itemForm">
+        <button type="button" (click)="itemForm.patchValue({ quantity: itemForm.controls.quantity.value - 1 })">−</button>
+        <input type="number" min="1" formControlName="quantity" />
+        <button type="button" (click)="itemForm.patchValue({ quantity: itemForm.controls.quantity.value + 1 })">+</button>
+      </div>
+      <label>IMEI<input placeholder="IMEI" /></label>
+      <aside class="price-box">
+        <h2>Details des prix</h2>
+        <p>{{ selectedOffer.name }}, Quantite: {{ itemForm.controls.quantity.value }}</p>
+        <div><strong>Une fois</strong><span>Dhs {{ selectedOffer.price | number:'1.2-2' }}</span></div>
+      </aside>
+    </section>
+  </main>
+
+  <main class="quote-shell" *ngIf="viewMode === 'quote'">
+    <section class="quote-header">
+      <span class="active">Des produits</span>
+      <span>Details</span>
+    </section>
+    <h1>Resume du devis</h1>
+    <div class="quote-table">
+      <div class="quote-row head"><span>La description</span><span>Action</span><span>Quantite</span><span>Une fois</span><span>Recurrent</span></div>
+      <div class="quote-row" *ngFor="let item of sale.items">
+        <span><strong>{{ item.offerName }}</strong><small>{{ item.offerCode }}</small></span>
+        <span>Ajouter</span>
+        <span>{{ item.quantity }}</span>
+        <span>Dhs{{ item.totalPrice | number:'1.2-2' }}</span>
+        <span>-</span>
+      </div>
+      <p class="notes">Notes Importantes<br />Tous les montants excluent les taxes applicables</p>
+      <aside class="quote-total">
+        <p><span>Total</span><strong>Dhs{{ quoteTotal | number:'1.2-2' }}</strong></p>
+        <p><span>Rabais</span><span>-</span></p>
+        <p><span>Total du devis</span><strong>Dhs{{ quoteTotal | number:'1.2-2' }}</strong></p>
+        <p><span>Payez maintenant</span><strong>Dhs{{ quoteTotal | number:'1.2-2' }}</strong></p>
+      </aside>
     </div>
-  </div>
+  </main>
 
-  <div class="summary panel">
-    <strong>Total: {{ sale.totalAmount | number:'1.2-2' }} MAD</strong>
-    <button type="button" *ngIf="sale.status === 'DRAFT'" (click)="validate()">Valider</button>
-    <button type="button" *ngIf="sale.status === 'VALIDATED'" (click)="goPayment()">Paiement</button>
-    <a *ngIf="sale.status === 'PAID'" [routerLink]="['/sales', sale.id, 'invoice']">Facture</a>
-  </div>
-
-  <form class="cancel panel" [formGroup]="cancelForm" (ngSubmit)="cancel()" *ngIf="sale.status === 'DRAFT' || sale.status === 'VALIDATED'">
-    <input formControlName="reason" placeholder="Motif d'annulation" />
-    <button type="submit">Annuler la vente</button>
-  </form>
+  <footer class="quote-footer">
+    <div>
+      <small>Citation</small>
+      <strong>{{ sale.saleNumber }}</strong>
+      <p>{{ sale.customerName }}</p>
+    </div>
+    <div class="footer-actions">
+      <button type="button" class="ghost" (click)="showQuote()" [disabled]="sale.items.length === 0">Voir le devis</button>
+      <button type="button" *ngIf="viewMode === 'quote' && sale.status !== 'PAID'" (click)="validateAndGoPayment()" [disabled]="sale.items.length === 0">Passer la commande</button>
+      <button type="button" class="danger" *ngIf="viewMode === 'quote' && sale.status === 'DRAFT'" (click)="cancelForm.patchValue({ reason: 'Abandon utilisateur' }); cancel()">Abandonner</button>
+      <button type="button" class="ghost" (click)="backToCatalog()">Continuer vos achats</button>
+    </div>
+    <div class="footer-total">
+      <span>Une fois</span>
+      <strong>Dhs {{ quoteTotal | number:'1.2-2' }}</strong>
+    </div>
+  </footer>
 </section>

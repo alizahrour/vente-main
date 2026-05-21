@@ -13,30 +13,39 @@ export class CustomerFormPageComponent implements OnInit {
   customerId: number | null = null;
   errorMessage = '';
   saving = false;
-
-  readonly form = this.fb.nonNullable.group({
-    firstName: ['', [Validators.required, Validators.maxLength(80)]],
-    lastName: ['', [Validators.required, Validators.maxLength(80)]],
-    cin: ['', [Validators.required, Validators.maxLength(30)]],
-    phone: ['', [Validators.required, Validators.maxLength(25)]],
-    email: [''],
-    address: [''],
-    city: [''],
-  });
+  readonly form;
 
   constructor(
     private readonly fb: FormBuilder,
     private readonly route: ActivatedRoute,
     private readonly router: Router,
     private readonly customerService: CustomerService
-  ) {}
+  ) {
+    this.form = this.fb.nonNullable.group({
+      firstName: ['', [Validators.required, Validators.maxLength(80)]],
+      lastName: ['', [Validators.required, Validators.maxLength(80)]],
+      cin: ['', [Validators.required, Validators.maxLength(30)]],
+      phone: ['', [Validators.required, Validators.maxLength(25)]],
+      email: [''],
+      address: [''],
+      city: [''],
+    });
+  }
 
   ngOnInit(): void {
     const id = Number(this.route.snapshot.paramMap.get('id'));
     if (id) {
       this.customerId = id;
       this.customerService.getCustomer(id).subscribe({
-        next: (customer) => this.form.patchValue(customer),
+        next: (customer) => this.form.patchValue({
+          firstName: customer.firstName,
+          lastName: customer.lastName,
+          cin: customer.cin,
+          phone: customer.phone,
+          email: customer.email ?? '',
+          address: customer.address ?? '',
+          city: customer.city ?? '',
+        }),
         error: (error) => this.errorMessage = error.error?.message ?? 'Client introuvable.',
       });
     }

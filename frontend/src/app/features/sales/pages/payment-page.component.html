@@ -1,21 +1,69 @@
-<section class="page" *ngIf="sale">
-  <div class="page__header">
-    <div>
-      <p class="eyebrow">Paiement simule</p>
-      <h1>{{ sale.saleNumber }}</h1>
+<section class="payment-page" *ngIf="sale">
+  <header class="payment-top">
+    <div class="brand-line">
+      <span class="logo">maroc<br />telecom</span>
+      <strong>Portail Entreprise Unifie</strong>
     </div>
-    <a [routerLink]="['/sales', sale.id]" class="ghost">Retour vente</a>
-  </div>
+    <span>superuser / TEMAARA MASSIRA</span>
+  </header>
 
-  <form [formGroup]="form" (ngSubmit)="pay()" class="panel payment-card">
-    <p>Total attendu: <strong>{{ sale.totalAmount | number:'1.2-2' }} MAD</strong></p>
-    <label>Montant <input type="number" formControlName="amount" readonly /></label>
-    <label>Methode
-      <select formControlName="method">
-        <option *ngFor="let method of methods" [value]="method">{{ method }}</option>
-      </select>
-    </label>
+  <div class="citation-bar">☰ <strong>Citation: {{ sale.saleNumber }}</strong></div>
+
+  <form [formGroup]="form" (ngSubmit)="pay()" class="payment-card">
+    <h1>Paiement</h1>
+    <div class="totals">
+      <strong>Total HT : {{ amountWithoutTax | number:'1.2-2' }} DHs</strong>
+      <strong>Total TVA : {{ taxAmount | number:'1.2-2' }} DHs</strong>
+      <strong>Total Remise : 0 DHs</strong>
+      <strong>Total TTC : {{ sale.totalAmount | number:'1.2-2' }} DHs</strong>
+    </div>
+
+    <p>Selectionner un mode de paiement</p>
+    <div class="method-row">
+      <label *ngFor="let method of methods">
+        <input type="radio" name="method" [value]="method.value" formControlName="method" />
+        <span>{{ method.label }}</span>
+      </label>
+      <label><input type="radio" disabled /> <span>Avoir</span></label>
+    </div>
+
+    <div class="amount-row">
+      <label>Montant a payer<input type="number" formControlName="amount" /></label>
+      <label class="stamp"><input type="checkbox" formControlName="stampDuty" /> Droits de timbre</label>
+    </div>
+
+    <button type="submit" [disabled]="savingPayment || !!payment">Ajouter le paiement</button>
     <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
-    <button type="submit">Enregistrer le paiement</button>
+
+    <section class="payment-lines" *ngIf="payment">
+      <strong>Montant total paye : {{ payment.amount | number:'1.2-2' }} DHs</strong>
+      <div class="line-head"><span>Mode de paiement</span><span>Montant du paiement</span><span>Droits de timbre</span><span></span></div>
+      <div class="line-row"><span>{{ payment.method }}</span><span>{{ payment.amount | number:'1.2-2' }}</span><span>0.25</span><span>Suppr.</span></div>
+    </section>
   </form>
+
+  <footer class="payment-footer">
+    <div>
+      <small>Citation</small>
+      <strong>{{ sale.saleNumber }}</strong>
+      <p>{{ sale.customerName }}</p>
+    </div>
+    <div class="footer-actions">
+      <button type="button" [disabled]="!payment || submittingInvoice" (click)="submitInvoice()">Payer la facture</button>
+      <button type="button" class="ghost" [routerLink]="['/sales', sale.id, 'invoice']">Payer ulterieurement</button>
+      <button type="button" class="danger" routerLink="/sales/history">Abandonner</button>
+    </div>
+    <div class="footer-total">
+      <span>Une fois</span>
+      <strong>Dhs {{ sale.totalAmount | number:'1.2-2' }}</strong>
+    </div>
+  </footer>
+
+  <div class="modal-backdrop" *ngIf="successDialogOpen">
+    <section class="success-modal">
+      <h2>Succes de la soumission</h2>
+      <p>Soumission soumise avec succes. Votre identifiant de commande est {{ invoice?.saleNumber || sale.saleNumber }}</p>
+      <button type="button" (click)="closeSuccess()">D'accord</button>
+    </section>
+  </div>
 </section>

@@ -1,21 +1,25 @@
-<section class="page">
-  <div class="page__header">
+<section class="mt-page">
+  <header class="mt-header">
     <div>
-      <p class="eyebrow">Historique</p>
-      <h1>Ventes</h1>
+      <p class="mt-kicker">Commandes</p>
+      <h1>Liste des commandes</h1>
     </div>
-    <a routerLink="/sales/new" class="primary">Nouvelle vente</a>
-  </div>
+    <a routerLink="/sales/new" class="primary">Nouveau panier</a>
+  </header>
+
   <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
   <p class="empty-state" *ngIf="loading">Chargement...</p>
-  <div class="table" *ngIf="!loading">
-    <div class="row row--head"><span>Vente</span><span>Client</span><span>Statut</span><span>Total</span><span>Action</span></div>
-    <div class="row" *ngFor="let sale of sales">
-      <span><strong>{{ sale.saleNumber }}</strong><small>{{ sale.createdAt | date:'short' }}</small></span>
-      <span>{{ sale.customerName }}</span>
-      <span><span class="status">{{ sale.status }}</span></span>
-      <span>{{ sale.totalAmount | number:'1.2-2' }} MAD</span>
-      <span><a [routerLink]="['/sales', sale.id]">Ouvrir</a></span>
+
+  <section class="panel" *ngIf="!loading">
+    <div class="table">
+      <div class="row row--head"><span>ID commande</span><span>Client</span><span>Statut</span><span>Montant</span><span>Action</span></div>
+      <div class="row" *ngFor="let sale of sales">
+        <span><strong>{{ sale.saleNumber }}</strong><small>{{ sale.createdAt | date:'dd/MM/yyyy HH:mm' }}</small></span>
+        <span>{{ sale.customerName }}</span>
+        <span><span class="status">{{ sale.status }}</span></span>
+        <span>{{ sale.totalAmount | number:'1.2-2' }} MAD</span>
+        <span><a [routerLink]="['/sales', sale.id]">Ouvrir</a></span>
+      </div>
     </div>
-  </div>
+  </section>
 </section>

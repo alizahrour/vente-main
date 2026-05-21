@@ -1,23 +1,118 @@
-<section class="page">
-  <div class="page__header">
-    <div>
-      <p class="eyebrow">Nouvelle vente directe</p>
-      <h1>Creer une vente</h1>
+<section class="peu-page">
+  <header class="peu-topline">
+    <div class="peu-brand">
+      <span class="peu-logo">maroc<br />telecom</span>
+      <strong>Portail Entreprise Unifie</strong>
     </div>
-    <a routerLink="/sales/history" class="ghost">Historique</a>
-  </div>
+    <nav class="peu-actions">
+      <a routerLink="/sales/history">Commandes</a>
+      <a routerLink="/customers/new">Ajouter un client</a>
+    </nav>
+  </header>
 
-  <form [formGroup]="form" (ngSubmit)="createSale()" class="panel sale-start">
-    <label>Client existant
-      <select formControlName="customerId">
-        <option [ngValue]="null">Selectionner un client</option>
-        <option *ngFor="let customer of customers" [ngValue]="customer.id">
-          {{ customer.fullName }} - {{ customer.phone }}
-        </option>
-      </select>
-    </label>
-    <p class="hint">La vente sera creee en brouillon. Ajoute ensuite les offres dans le panier.</p>
-    <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
-    <button type="submit" [disabled]="saving">Creer la vente</button>
-  </form>
+  <section *ngIf="!selectedCustomer" class="search-view">
+    <h1>Recherche clients</h1>
+    <form class="search-card" [formGroup]="searchForm" (ngSubmit)="searchCustomers()">
+      <h2>Rechercher des fiches client</h2>
+      <div class="search-grid">
+        <input formControlName="phone" placeholder="Numero d'appel" />
+        <input formControlName="identityNumber" placeholder="Numero de la piece d'identite" />
+        <input formControlName="simCard" placeholder="Carte SIM" />
+        <input formControlName="publicKey" placeholder="Cle publique" />
+        <input formControlName="customerNumber" placeholder="N client" />
+        <input formControlName="city" placeholder="Ville" />
+        <input formControlName="name" placeholder="Nom / Raison sociale" />
+        <input formControlName="firstName" placeholder="Prenom" />
+        <input formControlName="ice" placeholder="ICE" />
+        <input formControlName="ccu" placeholder="CCU" />
+        <input formControlName="contractCode" placeholder="Code contrat" />
+        <input formControlName="email" placeholder="Email" />
+      </div>
+      <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
+      <div class="form-actions">
+        <button type="submit">Rechercher</button>
+        <button type="button" class="link-button" (click)="resetSearch()">Rafraichir</button>
+      </div>
+    </form>
+
+    <div class="results-card" *ngIf="searchResults.length">
+      <button type="button" class="customer-result" *ngFor="let customer of searchResults" (click)="selectCustomer(customer)">
+        <span>
+          <strong>{{ customer.fullName }}</strong>
+          <small>{{ customer.cin }} - {{ customer.phone }}</small>
+        </span>
+        <span>{{ customer.city || 'Ville non renseignee' }}</span>
+      </button>
+    </div>
+  </section>
+
+  <section *ngIf="selectedCustomer" class="customer-view">
+    <div class="customer-header">
+      <button type="button" class="icon-button" (click)="selectedCustomer = null">←</button>
+      <h1>{{ selectedCustomer.fullName }} <span>#ID {{ selectedCustomer.id }}</span></h1>
+      <span class="active-pill">Actif</span>
+      <button type="button" class="primary-link" (click)="openQuoteDialog()">Nouveau panier</button>
+    </div>
+
+    <nav class="tabs">
+      <span class="active">Vue d'ensemble</span>
+      <span>Informations client</span>
+      <span>Releve de compte</span>
+      <span>Contrats</span>
+      <span>Interactions</span>
+      <span>Commandes</span>
+    </nav>
+
+    <div class="metric-row">
+      <article><span>Solde client</span><strong>+12810.00 Dh</strong></article>
+      <article><span>Factures echues</span><strong>2, total de 12810.00 Dh</strong></article>
+      <article><span>Nombre de contrats</span><strong>8, dont 0 actives</strong></article>
+      <article><span>Agence de rattachement</span><strong>Massira</strong></article>
+    </div>
+
+    <div class="profile-grid">
+      <article class="info-panel">
+        <h2>Identite</h2>
+        <p><span>Titre, Prenom et Nom :</span> <strong>{{ selectedCustomer.fullName }}</strong></p>
+        <p><span>Identifiant :</span> <strong>CIN</strong> <span>Numero :</span> <strong>{{ selectedCustomer.cin }}</strong></p>
+        <p><span>Categorie :</span> <strong>Residentiel</strong></p>
+        <p><span>Segment :</span> <strong>Residentiels</strong></p>
+      </article>
+      <article class="info-panel">
+        <h2>Adresse</h2>
+        <p><span>Rue :</span> <strong>{{ selectedCustomer.address || '-' }}</strong></p>
+        <p><span>Ville :</span> <strong>{{ selectedCustomer.city || '-' }}</strong></p>
+        <p><span>Code postal :</span> <strong>11000</strong></p>
+        <p><span>Pays :</span> <strong>MAR</strong></p>
+      </article>
+      <article class="info-panel">
+        <h2>Attache commercial</h2>
+        <p><span>Prenom et Nom :</span> <strong>User Super</strong></p>
+        <p><span>Adresse email :</span> <strong>{{ selectedCustomer.email || '-' }}</strong></p>
+        <p><span>Telephone mobile :</span> <strong>{{ selectedCustomer.phone }}</strong></p>
+        <p><span>Agence :</span> <strong>TEMAARA MASSIRA</strong></p>
+      </article>
+    </div>
+  </section>
+
+  <div class="modal-backdrop" *ngIf="quoteDialogOpen">
+    <form class="quote-modal" [formGroup]="quoteForm" (ngSubmit)="createSale()">
+      <h2>Entrez les details du devis</h2>
+      <div class="quote-grid">
+        <label>Client<input [value]="selectedCustomer?.fullName" readonly /></label>
+        <label>Contact client<input formControlName="contact" /></label>
+        <label>Expiration du devis<input type="date" formControlName="expirationDate" /></label>
+        <label>Debut de la ordre<input formControlName="orderStart" /></label>
+        <label>Segment de commande<select formControlName="segment"><option>Commerce de detail</option></select></label>
+        <label>Compte de facturation<input formControlName="billingAccount" /></label>
+        <label>Type de reseau<input formControlName="networkType" /></label>
+        <label>Duree du credit<select formControlName="creditDuration"><option>N/A</option><option>18 Mois</option><option>12 Mois</option><option>24 Mois</option></select></label>
+      </div>
+      <textarea formControlName="description" placeholder="Description du devis"></textarea>
+      <div class="modal-actions">
+        <button type="button" class="ghost" (click)="closeQuoteDialog()">Annuler</button>
+        <button type="submit" [disabled]="saving">Continuer</button>
+      </div>
+    </form>
+  </div>
 </section>
