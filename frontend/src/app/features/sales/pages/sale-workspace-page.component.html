@@ -6,7 +6,7 @@
     </div>
     <nav class="peu-actions">
       <a routerLink="/sales/history">Commandes</a>
-      <a routerLink="/customers/new">Ajouter un client</a>
+      <a *ngIf="authService.hasRole('ADMIN')" routerLink="/customers/new">Ajouter un client</a>
     </nav>
   </header>
 

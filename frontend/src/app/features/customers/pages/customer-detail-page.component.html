@@ -1,0 +1,148 @@
+﻿<section class="customer-detail-page">
+  <p class="empty-state" *ngIf="loading">Chargement de la fiche client...</p>
+  <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
+
+  <ng-container *ngIf="customer as client">
+    <header class="detail-titlebar">
+      <a class="back-link" routerLink="/customers" aria-label="Retour a la recherche">&#8249;</a>
+      <h1>{{ client.fullName }} <span>#ID {{ profile.customerNumber }}</span></h1>
+      <span class="active-pill">{{ profile.status }}</span>
+      <nav class="detail-actions" aria-label="Actions client">
+        <button type="button" (click)="createBasket()" [disabled]="creatingBasket">
+          <span class="mini-icon mini-icon--basket" aria-hidden="true"></span>
+          Nouveau panier
+        </button>
+        <button type="button">
+          <span class="mini-icon mini-icon--portability" aria-hidden="true"></span>
+          Portabilit&eacute; IN
+        </button>
+        <span class="more-menu" aria-hidden="true">&#8942;</span>
+      </nav>
+    </header>
+
+    <nav class="detail-tabs" aria-label="Sections client">
+      <span class="is-active">Vue d'ensemble</span>
+      <span>Informations client</span>
+      <span>Relev&eacute; de compte</span>
+      <span>Contrats</span>
+      <span>Interactions</span>
+      <span>Commandes</span>
+      <span>Gestion de portage IN</span>
+    </nav>
+
+    <div class="metric-grid">
+      <article>
+        <span class="metric-icon">&#9636;</span>
+        <p>Solde client</p>
+        <strong>{{ formatMoney(profile.balance) }}</strong>
+      </article>
+      <article>
+        <span class="metric-icon">&#9651;</span>
+        <p>Factures &eacute;chues</p>
+        <strong>{{ profile.overdueInvoicesCount }}, total de {{ formatMoney(profile.overdueTotal) }}</strong>
+      </article>
+      <article>
+        <span class="metric-icon">&#9639;</span>
+        <p>Nombre de contrats</p>
+        <strong>{{ profile.contractCount }}, dont {{ profile.activeContractsCount }} activ&eacute;s</strong>
+      </article>
+      <article>
+        <span class="metric-icon">&#9637;</span>
+        <p>Agence de rattachement</p>
+        <strong>{{ profile.agency }}</strong>
+      </article>
+    </div>
+
+    <div class="profile-grid">
+      <article class="info-panel">
+        <div class="panel-tabs">
+          <span class="is-active">Identit&eacute;</span>
+          <span>Identification</span>
+        </div>
+        <p><span>Titre, Pr&eacute;nom et Nom :</span> <strong>{{ client.fullName }}</strong></p>
+        <p><span>Identifiant :</span> <strong>CIN</strong> <i></i> <span>Num&eacute;ro :</span> <strong>{{ client.cin }}</strong></p>
+        <p><span>Cat&eacute;gorie :</span> <strong>{{ profile.category }}</strong></p>
+        <p><span>Segment :</span> <strong>{{ profile.segment }}</strong></p>
+      </article>
+
+      <article class="info-panel">
+        <div class="panel-tabs">
+          <span class="is-active">Adresse</span>
+          <span>Contact</span>
+        </div>
+        <p><span>Num&eacute;ro :</span> <strong>{{ profile.streetNumber }}</strong> <i></i> <span>Rue :</span> <strong>{{ client.address || '-' }}</strong></p>
+        <p><span>Ville :</span> <strong>{{ client.city || '-' }}</strong></p>
+        <p><span>Compl&eacute;ment d'adresse :</span> <strong>{{ profile.addressComplement }}</strong></p>
+        <p><span>Code postal :</span> <strong>{{ profile.postalCode }}</strong></p>
+        <p><span>Pays :</span> <strong>{{ profile.country }}</strong></p>
+      </article>
+
+      <article class="info-panel">
+        <div class="panel-tabs">
+          <span class="is-active">Attach&eacute; commercial</span>
+        </div>
+        <p><span>Pr&eacute;nom et Nom :</span> <strong>{{ profile.commercial.fullName }}</strong></p>
+        <p><span>Adresse email :</span> <strong>{{ profile.commercial.email || '-' }}</strong></p>
+        <p><span>T&eacute;l&eacute;phone mobile :</span> <strong>{{ profile.commercial.phone || '-' }}</strong></p>
+        <p><span>Agence :</span> <strong>{{ profile.commercial.agency }}</strong></p>
+      </article>
+    </div>
+
+    <div class="detail-lower-grid">
+      <article class="work-panel contracts-panel">
+        <h2>Contrats</h2>
+        <h3>Statut des contrats</h3>
+        <div class="contract-status">
+          <strong>Contrats pr&eacute;pay&eacute;s</strong>
+          <span>&#10003; {{ profile.contractStatus.prepaid.active }} Actifs</span>
+          <span>&#8635; {{ profile.contractStatus.prepaid.suspended }} Suspendus</span>
+          <span>&#8856; {{ profile.contractStatus.prepaid.terminated }} R&eacute;sili&eacute;s</span>
+        </div>
+        <div class="contract-status">
+          <strong>Contrats postpay&eacute;s</strong>
+          <span>&#10003; {{ profile.contractStatus.postpaid.active }} Actifs</span>
+          <span>&#8635; {{ profile.contractStatus.postpaid.suspended }} Suspendus</span>
+          <span>&#8856; {{ profile.contractStatus.postpaid.terminated }} R&eacute;sili&eacute;s</span>
+        </div>
+      </article>
+
+      <article class="work-panel billing-panel">
+        <h2>Facturation</h2>
+        <div class="panel-tabs compact-tabs">
+          <span class="is-active">Derni&egrave;res factures</span>
+          <span>Derniers paiements</span>
+        </div>
+        <table>
+          <thead>
+            <tr><th>R&eacute;f&eacute;rence</th><th>Montant</th><th>Reste</th></tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let invoice of profile.invoices">
+              <td>{{ invoice.reference }}</td>
+              <td>{{ invoice.amount }}</td>
+              <td>{{ invoice.remaining }}</td>
+            </tr>
+            <tr *ngIf="!profile.invoices.length">
+              <td colspan="3">Aucune facture disponible</td>
+            </tr>
+          </tbody>
+        </table>
+      </article>
+
+      <article class="work-panel interactions-panel">
+        <h2>Derni&egrave;res interactions</h2>
+        <div class="panel-tabs compact-tabs">
+          <span class="is-active">Tout</span>
+          <span>Ev&eacute;nements client</span>
+          <span>Ev&eacute;nements contrat</span>
+        </div>
+        <div class="interaction" *ngFor="let interaction of profile.interactions">
+          <span class="interaction-avatar"></span>
+          <div><strong>{{ interaction.title }}</strong><small>{{ interaction.user }}</small><small>{{ interaction.description }}</small></div>
+          <time>{{ interaction.happenedAt }}</time>
+        </div>
+        <p class="empty-state" *ngIf="!profile.interactions.length">Aucune interaction disponible.</p>
+      </article>
+    </div>
+  </ng-container>
+</section>

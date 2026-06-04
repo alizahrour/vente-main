@@ -1,0 +1,27 @@
+<section class="result-list">
+  <div class="result-list__toolbar">
+    <span class="result-list__range">{{ pageStart }} - {{ pageEnd }} sur {{ total }}</span>
+
+    <div class="result-list__pagination" aria-label="Pagination">
+      <button type="button" [disabled]="!hasPreviousPage" (click)="previousPage.emit()" aria-label="Page precedente">
+        &#8249;
+      </button>
+      <button type="button" [disabled]="!hasNextPage" (click)="nextPage.emit()" aria-label="Page suivante">
+        &#8250;
+      </button>
+    </div>
+  </div>
+
+  <div class="result-list__heading">
+    <span>Identit&eacute; <small>(Client / Num&eacute;ro client)</small></span>
+    <span>Contrat <small>(Num&eacute;ro / Date d'activation / IMSI / ND / Offre)</small></span>
+    <span>Adresse</span>
+  </div>
+
+  <div class="result-list__cards">
+    <app-customer-result-card
+      *ngFor="let record of records; trackBy: trackById"
+      [record]="record"
+    ></app-customer-result-card>
+  </div>
+</section>

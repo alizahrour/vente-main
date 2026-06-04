@@ -41,7 +41,7 @@ export class LoginPageComponent {
       .subscribe({
         next: () => {
           const user = this.authService.getCurrentUserSnapshot();
-          this.router.navigate([user?.role === 'AGENT' ? '/sales/new' : '/dashboard']);
+          this.router.navigate([user?.role === 'SUPERVISOR' ? '/dashboard' : '/customers']);
         },
         error: (error) => {
           this.errorMessage = error.error?.message ?? 'Connexion impossible.';

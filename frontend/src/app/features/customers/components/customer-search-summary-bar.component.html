@@ -1,0 +1,39 @@
+<section class="summary-bar-card" aria-label="Crit&egrave;res de recherche">
+  <div class="summary-items">
+    <ng-container *ngFor="let item of items">
+      <span class="summary-separator" *ngIf="item.type === 'separator'" aria-hidden="true"></span>
+
+      <button
+        *ngIf="item.type === 'field'"
+        class="summary-chip"
+        [class.summary-chip--active]="item.active"
+        type="button"
+        (click)="editRequested.emit()"
+      >
+        <span class="summary-chip__label">{{ item.label }}</span>
+        <span class="summary-chip__value">{{ item.value || 'Non renseign&eacute;' }}</span>
+      </button>
+    </ng-container>
+  </div>
+
+  <button
+    *ngIf="!isEditing; else closeButton"
+    class="summary-toggle"
+    type="button"
+    aria-label="Modifier les criteres de recherche"
+    (click)="editRequested.emit()"
+  >
+    &#9998;
+  </button>
+
+  <ng-template #closeButton>
+    <button
+      class="summary-toggle"
+      type="button"
+      aria-label="Fermer la modification des criteres"
+      (click)="closeRequested.emit()"
+    >
+      &times;
+    </button>
+  </ng-template>
+</section>

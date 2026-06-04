@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { of } from 'rxjs';
+import { AuthService } from '../../../core/services/auth.service';
 import { CustomerService } from '../../../core/services/customer.service';
 import { SaleService } from '../../../core/services/sale.service';
 import { SaleWorkspacePageComponent } from './sale-workspace-page.component';
@@ -32,6 +33,10 @@ describe('SaleWorkspacePageComponent', () => {
           provide: Router,
           useValue: router,
         },
+        {
+          provide: AuthService,
+          useValue: { hasRole: () => false },
+        },
       ],
     })
       .overrideComponent(SaleWorkspacePageComponent, { set: { template: '' } })
@@ -57,7 +62,17 @@ describe('SaleWorkspacePageComponent', () => {
       agent: 'Agent Telecom',
       items: [],
     }));
-    component.form.controls.customerId.setValue(1);
+    component.selectedCustomer = {
+      id: 1,
+      firstName: 'Sara',
+      lastName: 'Bennani',
+      fullName: 'Sara Bennani',
+      cin: 'CIN123',
+      phone: '0600000000',
+      email: null,
+      address: null,
+      city: 'Casablanca',
+    };
 
     component.createSale();
 

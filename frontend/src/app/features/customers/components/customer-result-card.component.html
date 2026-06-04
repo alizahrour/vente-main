@@ -1,0 +1,52 @@
+<a
+  class="result-card"
+  [routerLink]="['/customers', record.id]"
+  [attr.aria-label]="'Consulter la fiche client de ' + record.displayName"
+>
+  <div class="result-card__identity">
+    <strong class="result-card__title">{{ record.displayName }}</strong>
+    <strong class="result-card__subtitle">{{ record.customerNumber }}</strong>
+    <p>
+      <span>Identifiant :</span>
+      <b>{{ record.identityType || 'CIN' }}</b>
+      <i></i>
+      <span>Num&eacute;ro :</span>
+      <b>{{ record.identityNumber || '-' }}</b>
+    </p>
+    <p>
+      <span>Segment :</span>
+      <b>{{ record.segment || '-' }}</b>
+      <i></i>
+      <span>Cat&eacute;gorie :</span>
+      <b>{{ record.customerClass || '-' }}</b>
+    </p>
+  </div>
+
+  <div class="result-card__contracts">
+    <ng-container *ngIf="previewContracts.length; else emptyContracts">
+      <p *ngFor="let contract of previewContracts" class="result-card__contract">
+        <b>{{ contract.contractNumber }}</b>
+        <i></i>
+        {{ contract.activationDate }}
+        <i></i>
+        {{ contract.imsi }}
+        <i></i>
+        {{ contract.nd }}
+        <i></i>
+        {{ contract.offer }}
+      </p>
+    </ng-container>
+
+    <ng-template #emptyContracts>
+      <p class="result-card__empty-contracts">Aucun contrat disponible.</p>
+    </ng-template>
+
+    <p class="result-card__more-contracts" *ngIf="remainingContractsCount > 0">
+      +{{ remainingContractsCount }} Contrats
+    </p>
+  </div>
+
+  <div class="result-card__address">
+    <p *ngFor="let line of record.addressLines">{{ line }}</p>
+  </div>
+</a>

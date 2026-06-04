@@ -1,0 +1,31 @@
+<form class="search-form-card" [formGroup]="form" (ngSubmit)="submitted.emit()">
+  <h2 *ngIf="isEditMode; else initialTitle">Modifier vos crit&egrave;res de recherche</h2>
+  <ng-template #initialTitle>
+    <h2>Rechercher des fiches client</h2>
+  </ng-template>
+
+  <p class="criteria-hint criteria-hint--error" *ngIf="validationMessage">{{ validationMessage }}</p>
+
+  <div class="search-form-grid">
+    <input
+      *ngFor="let field of fields"
+      [formControlName]="field.name"
+      [placeholder]="field.placeholder"
+      [attr.aria-label]="field.label"
+      [attr.list]="field.isCityField ? cityListId : null"
+      type="text"
+    />
+  </div>
+
+  <datalist [id]="cityListId">
+    <option *ngFor="let city of cityOptions" [value]="city"></option>
+  </datalist>
+
+  <div class="form-actions">
+    <button type="submit" [disabled]="loading">{{ loading ? 'Recherche...' : 'Rechercher' }}</button>
+    <button type="button" class="refresh-button" [disabled]="loading" (click)="refreshed.emit()">Rafra&icirc;chir</button>
+    <span class="criteria-count" *ngIf="hasSearched && filledCriteriaCount">
+      {{ filledCriteriaCount }} crit&egrave;re{{ filledCriteriaCount > 1 ? 's' : '' }} actif{{ filledCriteriaCount > 1 ? 's' : '' }}
+    </span>
+  </div>
+</form>

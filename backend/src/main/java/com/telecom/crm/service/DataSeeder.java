@@ -85,30 +85,35 @@ public class DataSeeder implements CommandLineRunner {
     }
 
     private void seedCustomers() {
-        if (customerRepository.count() > 0) {
+        seedCustomer("Sara", "Bennani", "CIN-BN001", "0600000001", "sara.bennani@example.com", "12 Avenue Mohammed V", "Casablanca");
+        seedCustomer("Youssef", "Alaoui", "CIN-AL002", "0600000002", "youssef.alaoui@example.com", "8 Rue Atlas", "Rabat");
+        seedCustomer("ali", "credit", "AZ7489", "0667001122", null, "AZAHRAE", "SALE LAYAYDA");
+        seedCustomer("Mouna", "El Fassi", "BK55210", "0677889900", "mouna.elfassi@example.com", "RUE ATLAS", "RABAT");
+        seedCustomer("Karim", "Naciri", "CD90112", "0655442211", "karim.naciri@example.com", "BD BIR ANZARANE", "CASABLANCA");
+    }
+
+    private void seedCustomer(
+            String firstName,
+            String lastName,
+            String cin,
+            String phone,
+            String email,
+            String address,
+            String city
+    ) {
+        if (customerRepository.existsByPhone(phone) || customerRepository.existsByCin(cin)) {
             return;
         }
 
-        customerRepository.saveAll(List.of(
-                Customer.builder()
-                        .firstName("Sara")
-                        .lastName("Bennani")
-                        .cin("CIN-BN001")
-                        .phone("0600000001")
-                        .email("sara.bennani@example.com")
-                        .address("12 Avenue Mohammed V")
-                        .city("Casablanca")
-                        .build(),
-                Customer.builder()
-                        .firstName("Youssef")
-                        .lastName("Alaoui")
-                        .cin("CIN-AL002")
-                        .phone("0600000002")
-                        .email("youssef.alaoui@example.com")
-                        .address("8 Rue Atlas")
-                        .city("Rabat")
-                        .build()
-        ));
+        customerRepository.save(Customer.builder()
+                .firstName(firstName)
+                .lastName(lastName)
+                .cin(cin)
+                .phone(phone)
+                .email(email)
+                .address(address)
+                .city(city)
+                .build());
     }
 
     private void seedOffers() {

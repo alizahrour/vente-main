@@ -53,6 +53,6 @@ describe('LoginPageComponent', () => {
     component.submit();
 
     expect(authService.login).toHaveBeenCalledWith({ username: 'agent', password: 'agent123' });
-    expect(router.navigate).toHaveBeenCalledWith(['/sales/new']);
+    expect(router.navigate).toHaveBeenCalledWith(['/customers']);
   });
 });

@@ -1,33 +1,72 @@
-<section class="page">
-  <div class="page__header">
-    <div>
-      <p class="eyebrow">Portefeuille commercial</p>
-      <h1>Clients</h1>
-    </div>
-    <a routerLink="/customers/new" class="primary">Nouveau client</a>
-  </div>
+<section class="customer-search-page">
+  <header class="command-bar">
+    <h1>Recherche clients</h1>
 
-  <div class="toolbar panel">
-    <input [(ngModel)]="keyword" (keyup.enter)="search()" placeholder="Nom, CIN, telephone..." />
-    <button type="button" (click)="search()">Rechercher</button>
-  </div>
+    <nav class="quick-actions" aria-label="Actions rapides">
+      <a routerLink="/sales/new">
+        <span class="action-icon action-icon--basket" aria-hidden="true"></span>
+        + panier anonyme
+      </a>
+      <a *ngIf="authService.hasRole('ADMIN')" routerLink="/sales/history">
+        <span class="action-icon action-icon--seller" aria-hidden="true"></span>
+        Ajouter un revendeur
+      </a>
+      <a *ngIf="authService.hasRole('ADMIN')" routerLink="/customers/new">
+        <span class="action-icon action-icon--client" aria-hidden="true"></span>
+        Ajouter un client
+      </a>
+    </nav>
+  </header>
 
-  <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
-  <p class="empty-state" *ngIf="loading">Chargement...</p>
+  <div class="search-workspace" [class.search-workspace--results]="hasSearched">
+    <app-customer-search-summary-bar
+      *ngIf="hasSearched"
+      [items]="summaryItems"
+      [isEditing]="isEditingCriteria"
+      (editRequested)="openCriteriaEditor()"
+      (closeRequested)="closeCriteriaEditor()"
+    ></app-customer-search-summary-bar>
 
-  <div class="table" *ngIf="!loading">
-    <div class="row row--head">
-      <span>Client</span><span>CIN</span><span>Telephone</span><span>Ville</span><span>Actions</span>
-    </div>
-    <div class="row" *ngFor="let customer of customers">
-      <span><strong>{{ customer.fullName }}</strong><small>{{ customer.email || 'Aucun email' }}</small></span>
-      <span>{{ customer.cin }}</span>
-      <span>{{ customer.phone }}</span>
-      <span>{{ customer.city || '-' }}</span>
-      <span class="actions">
-        <a [routerLink]="['/customers', customer.id, 'edit']">Modifier</a>
-        <button type="button" (click)="deleteCustomer(customer)">Supprimer</button>
-      </span>
-    </div>
+    <app-customer-search-form
+      *ngIf="!hasSearched || isEditingCriteria"
+      [form]="searchForm"
+      [fields]="searchFields"
+      [cityOptions]="cityOptions"
+      [loading]="loading"
+      [isEditMode]="hasSearched"
+      [hasSearched]="hasSearched"
+      [filledCriteriaCount]="filledCriteriaCount"
+      [validationMessage]="validationMessage"
+      (submitted)="search()"
+      (refreshed)="refresh()"
+    ></app-customer-search-form>
+
+    <p class="error-message" *ngIf="errorMessage">{{ errorMessage }}</p>
+    <p class="status-message" *ngIf="loading">Chargement des r&eacute;sultats...</p>
+
+    <ng-container *ngIf="hasSearched && !loading && !errorMessage">
+      <app-customer-category-tabs
+        class="results-block"
+        [tabs]="tabs"
+        [activeCategory]="activeCategory"
+        (categorySelected)="selectCategory($event)"
+      ></app-customer-category-tabs>
+
+      <app-customer-result-list
+        *ngIf="hasAnyResults"
+        [records]="paginatedRecords"
+        [pageStart]="pageStart"
+        [pageEnd]="pageEnd"
+        [total]="activeRecordsCount"
+        [hasPreviousPage]="hasPreviousPage"
+        [hasNextPage]="hasNextPage"
+        (previousPage)="previousPage()"
+        (nextPage)="nextPage()"
+      ></app-customer-result-list>
+
+      <p class="status-message" *ngIf="!hasAnyResults">
+        Aucun client trouv&eacute; pour ces crit&egrave;res.
+      </p>
+    </ng-container>
   </div>
 </section>

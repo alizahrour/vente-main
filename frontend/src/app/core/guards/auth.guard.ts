@@ -14,7 +14,7 @@ export class AuthGuard implements CanActivate, CanActivateChild {
       const roles = route.data['roles'] as string[] | undefined;
       if (roles?.length && !this.authService.hasRole(...roles)) {
         const user = this.authService.getCurrentUserSnapshot();
-        return this.router.createUrlTree([user?.role === 'AGENT' ? '/sales/new' : '/dashboard']);
+        return this.router.createUrlTree([user?.role === 'SUPERVISOR' ? '/dashboard' : '/customers']);
       }
       return true;
     }

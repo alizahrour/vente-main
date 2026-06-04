@@ -14,7 +14,7 @@ const routes: Routes = [
     canActivate: [AuthGuard],
     canActivateChild: [AuthGuard],
     children: [
-      { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
+      { path: '', pathMatch: 'full', redirectTo: 'customers' },
       {
         path: 'dashboard',
         data: { roles: ['ADMIN', 'SUPERVISOR', 'AGENT'] },

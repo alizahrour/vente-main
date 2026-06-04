@@ -2,6 +2,7 @@ import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Customer } from '../../../core/models/customer.models';
+import { AuthService } from '../../../core/services/auth.service';
 import { CustomerService } from '../../../core/services/customer.service';
 import { SaleService } from '../../../core/services/sale.service';
 
@@ -25,6 +26,7 @@ export class SaleWorkspacePageComponent implements OnInit {
   constructor(
     private readonly fb: FormBuilder,
     private readonly router: Router,
+    public readonly authService: AuthService,
     private readonly customerService: CustomerService,
     private readonly saleService: SaleService,
     private readonly cdr: ChangeDetectorRef

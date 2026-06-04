@@ -1,0 +1,15 @@
+<nav class="result-tabs" aria-label="Cat&eacute;gories de r&eacute;sultats" role="tablist">
+  <button
+    *ngFor="let tab of tabs"
+    class="result-tab"
+    [class.result-tab--active]="tab.key === activeCategory"
+    [attr.aria-selected]="tab.key === activeCategory"
+    [attr.data-category]="tab.key"
+    role="tab"
+    type="button"
+    (click)="categorySelected.emit(tab.key)"
+  >
+    <span class="tab-icon" [class]="'tab-icon tab-icon--' + tab.icon" aria-hidden="true"></span>
+    <span>{{ tab.label }} - {{ tab.count }}</span>
+  </button>
+</nav>

@@ -1,43 +1,24 @@
-<aside class="sidebar">
-  <div class="brand">
-    <span class="brand-mark">VT</span>
-    <div>
-      <span class="eyebrow">Vente directe</span>
-      <strong>Telecom</strong>
-    </div>
-  </div>
+<header class="portal-header" *ngIf="authService.currentUser$ | async as user">
+  <a class="portal-brand" routerLink="/customers" aria-label="Accueil portail">
+    <span class="logo-mark">
+      <span>maroc</span>
+      <span>telecom</span>
+    </span>
+    <strong>Portail Entreprise Unifié</strong>
+  </a>
 
-  <nav class="menu" aria-label="Navigation principale">
-    <a *ngIf="authService.hasRole('ADMIN', 'SUPERVISOR', 'AGENT')" routerLink="/dashboard" routerLinkActive="is-active">
-      <span>Tableau de bord</span>
-    </a>
-    <a *ngIf="authService.hasRole('ADMIN', 'AGENT')" routerLink="/customers" routerLinkActive="is-active">
-      <span>Clients</span>
-    </a>
-    <a *ngIf="authService.hasRole('ADMIN', 'AGENT')" routerLink="/offers" routerLinkActive="is-active">
-      <span>Catalogue offres</span>
-    </a>
-    <a *ngIf="authService.hasRole('ADMIN', 'AGENT')" routerLink="/sales/new" routerLinkActive="is-active">
-      <span>Creer une vente</span>
-    </a>
-    <a routerLink="/sales/history" routerLinkActive="is-active">
-      <span>Historique ventes</span>
-    </a>
-  </nav>
-</aside>
-
-<header class="app-header">
-  <div>
-    <span class="header-kicker">Plateforme commerciale</span>
-    <strong>Gestion de vente directe telecom</strong>
-  </div>
-
-  <div class="user-panel" *ngIf="authService.currentUser$ | async as user">
-    <span class="avatar">{{ user.fullName.charAt(0) }}</span>
-    <div>
-      <strong>{{ user.fullName }}</strong>
-      <span>{{ user.role }}</span>
-    </div>
-    <button type="button" class="ghost-button" (click)="logout()">Se deconnecter</button>
+  <div class="portal-session">
+    <button class="round-icon" type="button" aria-label="Notifications">
+      <span class="bell-icon" aria-hidden="true"></span>
+    </button>
+    <button class="round-icon" type="button" (click)="logout()" aria-label="Se déconnecter">
+      <span class="user-icon" aria-hidden="true"></span>
+    </button>
+    <span class="session-name">{{ user.username }} / <strong>{{ user.fullName }}</strong></span>
+    <button class="apps-icon" type="button" aria-label="Menu applications">
+      <span></span><span></span><span></span>
+      <span></span><span></span><span></span>
+      <span></span><span></span><span></span>
+    </button>
   </div>
 </header>
