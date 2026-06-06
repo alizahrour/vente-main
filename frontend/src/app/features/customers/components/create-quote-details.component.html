@@ -1,0 +1,80 @@
+<div class="quote-dialog-backdrop">
+  <form class="quote-dialog" [formGroup]="quoteForm" (ngSubmit)="submit()">
+    <header class="quote-dialog__header">
+      <div>
+        <h2>Entrez les d&eacute;tails du devis</h2>
+      </div>
+      <button type="button" class="quote-dialog__close" aria-label="Fermer la fenetre" (click)="cancelRequested.emit()">
+        &times;
+      </button>
+    </header>
+
+    <div class="quote-dialog__grid">
+      <label class="quote-dialog__field">
+        <span class="quote-dialog__label">Client *</span>
+        <input [value]="customer.fullName" readonly />
+      </label>
+
+      <label class="quote-dialog__field">
+        <span class="quote-dialog__label">Contact client</span>
+        <select formControlName="customerContact">
+          <option *ngFor="let option of contactOptions" [value]="option.value">{{ option.label }}</option>
+        </select>
+      </label>
+
+      <label class="quote-dialog__field">
+        <span class="quote-dialog__label">Expiration du devis *</span>
+        <input type="date" formControlName="quoteExpirationDate" />
+      </label>
+
+      <label class="quote-dialog__field">
+        <span class="quote-dialog__label">D&eacute;but de la ordre</span>
+        <input [value]="orderStartLabel" readonly />
+      </label>
+
+      <label class="quote-dialog__field">
+        <span class="quote-dialog__label">Segment de commande *</span>
+        <select formControlName="orderSegment">
+          <option *ngFor="let option of orderSegmentOptions" [value]="option.value">{{ option.label }}</option>
+        </select>
+      </label>
+
+      <label class="quote-dialog__field">
+        <span class="quote-dialog__label">Compte de facturation</span>
+        <select formControlName="billingAccount">
+          <option *ngFor="let option of billingAccountOptions" [value]="option.value">{{ option.label }}</option>
+        </select>
+      </label>
+
+      <label class="quote-dialog__field">
+        <span class="quote-dialog__label">Type de r&eacute;seau *</span>
+        <select formControlName="networkType">
+          <option *ngFor="let option of networkTypeOptions" [value]="option.value">{{ option.label }}</option>
+        </select>
+      </label>
+
+      <label class="quote-dialog__field">
+        <span class="quote-dialog__label">Duree du credit</span>
+        <select formControlName="creditDuration">
+          <option *ngFor="let option of creditDurationOptions" [value]="option.value">{{ option.label }}</option>
+        </select>
+      </label>
+
+      <label class="quote-dialog__field quote-dialog__field--full">
+        <span class="quote-dialog__label">Description du devis</span>
+        <textarea formControlName="description" rows="3"></textarea>
+      </label>
+    </div>
+
+    <p class="quote-dialog__validation" *ngIf="submitAttempted && quoteForm.invalid">
+      Veuillez renseigner les champs obligatoires du devis.
+    </p>
+
+    <p class="quote-dialog__error" *ngIf="errorMessage">{{ errorMessage }}</p>
+
+    <div class="quote-dialog__actions">
+      <button type="button" class="ghost" [disabled]="saving" (click)="cancelRequested.emit()">Annuler</button>
+      <button type="submit" [disabled]="saving">{{ saving ? 'Creation...' : 'Continuer' }}</button>
+    </div>
+  </form>
+</div>

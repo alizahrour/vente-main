@@ -6,6 +6,7 @@ import com.telecom.crm.service.OfferService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import java.util.List;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -43,7 +44,29 @@ public class OfferController {
         return ResponseEntity.ok(offerService.getActiveOffers());
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/eligible")
+    @PreAuthorize("hasAnyRole('AGENT', 'ADMIN')")
+    public ResponseEntity<Page<OfferResponse>> getEligibleOffers(
+            @RequestParam Long quoteId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size,
+            @RequestParam(required = false) String search,
+            @RequestParam(required = false) String hierarchyCode,
+            @RequestParam(required = false) String productTypeCode,
+            @RequestParam(required = false) Boolean bundle
+    ) {
+        return ResponseEntity.ok(offerService.getEligibleOffers(
+                quoteId,
+                page,
+                size,
+                search,
+                hierarchyCode,
+                productTypeCode,
+                bundle
+        ));
+    }
+
+    @GetMapping("/{id:\\d+}")
     @PreAuthorize("hasAnyRole('AGENT', 'ADMIN')")
     public ResponseEntity<OfferResponse> getOffer(@PathVariable Long id) {
         return ResponseEntity.ok(offerService.getOffer(id));
@@ -55,19 +78,19 @@ public class OfferController {
         return ResponseEntity.ok(offerService.createOffer(request));
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/{id:\\d+}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<OfferResponse> updateOffer(@PathVariable Long id, @Valid @RequestBody OfferRequest request) {
         return ResponseEntity.ok(offerService.updateOffer(id, request));
     }
 
-    @PatchMapping("/{id}/activate")
+    @PatchMapping("/{id:\\d+}/activate")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<OfferResponse> activateOffer(@PathVariable Long id) {
         return ResponseEntity.ok(offerService.activateOffer(id));
     }
 
-    @PatchMapping("/{id}/deactivate")
+    @PatchMapping("/{id:\\d+}/deactivate")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<OfferResponse> deactivateOffer(@PathVariable Long id) {
         return ResponseEntity.ok(offerService.deactivateOffer(id));

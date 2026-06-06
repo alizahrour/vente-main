@@ -1,0 +1,117 @@
+<section class="quote-catalog-page">
+  <p class="state-message" *ngIf="loadingQuote">Chargement du catalogue...</p>
+  <p class="state-message state-message--error" *ngIf="errorMessage">{{ errorMessage }}</p>
+
+  <ng-container *ngIf="quote as currentQuote">
+    <header class="catalog-context">
+      <button type="button" class="context-back" (click)="goToQuoteDetail()" aria-label="Voir le devis">
+        &larr;
+      </button>
+      <div>
+        <strong>Parcourir les produits pour : {{ currentQuote.customerNameSnapshot || 'Client inconnu' }}</strong>
+        <p>Catalogue eligibles pour le devis {{ currentQuote.quoteNumber }}</p>
+      </div>
+    </header>
+
+    <section class="catalog-shell">
+      <aside class="filters">
+        <div class="filter-head">
+          <span>Filtres</span>
+          <button type="button" (click)="resetFilters()">Reinitialiser</button>
+        </div>
+
+        <div class="filter-group">
+          <p>Les categories</p>
+          <section *ngFor="let section of categories">
+            <h3>{{ section.label }}</h3>
+            <button
+              type="button"
+              *ngFor="let item of section.items"
+              [class.active]="selectedCategoryLabel === item.label"
+              (click)="selectCategory(item)">
+              {{ item.label }}
+            </button>
+          </section>
+        </div>
+      </aside>
+
+      <section class="product-area">
+        <label class="search-box">
+          <span class="sr-only">Recherche par nom de produit</span>
+          <input
+            type="search"
+            name="catalogSearch"
+            placeholder="Recherche par nom de produit"
+            [(ngModel)]="searchTerm"
+            (input)="onSearchInput()" />
+        </label>
+
+        <div class="result-toolbar">
+          <div>
+            <strong>{{ totalElements }} Resultat(s) trouves</strong>
+            <p *ngIf="selectedCategoryLabel">Categorie active : {{ selectedCategoryLabel }}</p>
+          </div>
+          <div class="pager" *ngIf="totalElements > 0">
+            <span>{{ currentRangeStart }}-{{ currentRangeEnd }} / {{ totalElements }}</span>
+            <button type="button" (click)="previousPage()" [disabled]="page === 0" aria-label="Page precedente">
+              &larr;
+            </button>
+            <button type="button" (click)="nextPage()" [disabled]="page + 1 >= totalPages" aria-label="Page suivante">
+              &rarr;
+            </button>
+          </div>
+        </div>
+
+        <p class="empty-state" *ngIf="loadingOffers">Chargement des produits...</p>
+        <p class="empty-state" *ngIf="!loadingOffers && totalElements === 0">Aucun produit eligible pour ce devis.</p>
+
+        <div class="product-grid" *ngIf="!loadingOffers && totalElements > 0">
+          <article class="product-card" *ngFor="let offer of offers; trackBy: trackByOfferId">
+            <div class="product-card__head">
+              <span class="bundle-badge" *ngIf="offer.bundle">Bundle</span>
+              <strong>{{ offer.name }}</strong>
+            </div>
+            <p class="product-meta">
+              <span>{{ offer.code }}</span>
+              <span *ngIf="offer.productTypeDescription">{{ offer.productTypeDescription }}</span>
+            </p>
+            <p class="product-brand" *ngIf="offer.brand">Marque : {{ offer.brand }}</p>
+            <p class="product-price">{{ offer.price | number:'1.2-2' }} MAD</p>
+            <div class="product-actions">
+              <button type="button" class="ghost" (click)="openDetails(offer)">Details</button>
+              <button type="button" disabled>Commander</button>
+            </div>
+          </article>
+        </div>
+
+        <article class="offer-detail" *ngIf="selectedOffer">
+          <div>
+            <h2>{{ selectedOffer.name }}</h2>
+            <p><strong>Code :</strong> {{ selectedOffer.code }}</p>
+            <p *ngIf="selectedOffer.productTypeDescription"><strong>Type :</strong> {{ selectedOffer.productTypeDescription }}</p>
+            <p *ngIf="selectedOffer.brand"><strong>Marque :</strong> {{ selectedOffer.brand }}</p>
+            <p *ngIf="selectedOffer.hierarchyCode"><strong>Hierarchie :</strong> {{ selectedOffer.hierarchyCode }}</p>
+          </div>
+          <div class="offer-detail__price">
+            <span>Prix</span>
+            <strong>{{ selectedOffer.price | number:'1.2-2' }} MAD</strong>
+          </div>
+        </article>
+      </section>
+    </section>
+
+    <footer class="quote-footer">
+      <div class="quote-footer__summary">
+        <small>Citation {{ currentQuote.quoteNumber }}</small>
+        <strong>{{ currentQuote.customerNameSnapshot || 'Client inconnu' }}</strong>
+      </div>
+      <div class="quote-footer__actions">
+        <button type="button" class="ghost" (click)="goToQuoteDetail()">Voir le devis</button>
+      </div>
+      <div class="quote-footer__total">
+        <span>Total du devis(Hors taxes)</span>
+        <strong>{{ currentQuote.totalAmount | number:'1.2-2' }} MAD</strong>
+      </div>
+    </footer>
+  </ng-container>
+</section>

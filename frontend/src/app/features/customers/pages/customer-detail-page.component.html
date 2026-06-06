@@ -8,7 +8,7 @@
       <h1>{{ client.fullName }} <span>#ID {{ profile.customerNumber }}</span></h1>
       <span class="active-pill">{{ profile.status }}</span>
       <nav class="detail-actions" aria-label="Actions client">
-        <button type="button" (click)="createBasket()" [disabled]="creatingBasket">
+        <button type="button" (click)="openQuoteDialog()" [disabled]="creatingQuote">
           <span class="mini-icon mini-icon--basket" aria-hidden="true"></span>
           Nouveau panier
         </button>
@@ -144,5 +144,16 @@
         <p class="empty-state" *ngIf="!profile.interactions.length">Aucune interaction disponible.</p>
       </article>
     </div>
+  </ng-container>
+
+  <ng-container *ngIf="quoteDialogOpen">
+    <app-create-quote-details
+      *ngIf="customer as currentCustomer"
+      [customer]="currentCustomer"
+      [saving]="creatingQuote"
+      [errorMessage]="quoteErrorMessage"
+      (cancelRequested)="closeQuoteDialog()"
+      (continueRequested)="createQuote($event)"
+    ></app-create-quote-details>
   </ng-container>
 </section>

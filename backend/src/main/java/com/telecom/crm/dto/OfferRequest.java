@@ -9,11 +9,11 @@ import com.telecom.crm.entity.OfferCategory;
 import java.math.BigDecimal;
 
 public record OfferRequest(
-        @NotBlank @Size(max = 40) String code,
-        @NotBlank @Size(max = 120) String name,
+        @NotBlank @Size(max = 80) String code,
+        @NotBlank @Size(max = 255) String name,
         @NotNull OfferCategory category,
         @Size(max = 255) String description,
-        @NotNull @DecimalMin(value = "0.01") BigDecimal price,
+        @NotNull @DecimalMin(value = "0.00") BigDecimal price,
         @NotNull @Min(1) Integer duration,
         boolean active
 ) {

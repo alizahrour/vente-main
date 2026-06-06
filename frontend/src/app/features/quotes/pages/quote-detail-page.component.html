@@ -1,0 +1,16 @@
+<section class="quote-detail-page">
+  <p class="state-message" *ngIf="loading">Chargement du devis...</p>
+  <p class="state-message state-message--error" *ngIf="errorMessage">{{ errorMessage }}</p>
+
+  <article class="quote-detail-card" *ngIf="quote as currentQuote">
+    <p class="quote-kicker">quoteDetail temporaire</p>
+    <h1>Resume du devis</h1>
+    <div class="quote-meta">
+      <span>Devis : <strong>{{ currentQuote.quoteNumber }}</strong></span>
+      <span>Client : <strong>{{ currentQuote.customerNameSnapshot || 'Client inconnu' }}</strong></span>
+      <span>Statut : <strong>{{ currentQuote.status }}</strong></span>
+      <span>Total : <strong>{{ currentQuote.totalAmount | number:'1.2-2' }} MAD</strong></span>
+    </div>
+    <button type="button" (click)="backToCatalog()">Retour au catalogue</button>
+  </article>
+</section>

@@ -22,11 +22,17 @@ class OfferServiceTest {
     @Mock
     private OfferRepository offerRepository;
 
+    @Mock
+    private QuoteService quoteService;
+
+    @Mock
+    private OfferExcelImportService offerExcelImportService;
+
     private OfferService offerService;
 
     @BeforeEach
     void setUp() {
-        offerService = new OfferService(offerRepository, new OfferMapper());
+        offerService = new OfferService(offerRepository, new OfferMapper(), quoteService, offerExcelImportService);
     }
 
     @Test

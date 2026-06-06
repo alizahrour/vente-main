@@ -1,0 +1,56 @@
+.quote-detail-page {
+  min-height: calc(100vh - 55px);
+  padding: 28px 20px 40px;
+}
+
+.quote-detail-card {
+  background: #ffffff;
+  border: 1px solid #dde4ec;
+  border-radius: 18px;
+  box-shadow: 0 18px 30px rgba(15, 42, 74, 0.06);
+  margin: 0 auto;
+  max-width: 1040px;
+  padding: 28px;
+}
+
+.quote-kicker {
+  color: #0b71b9;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  margin: 0 0 10px;
+  text-transform: uppercase;
+}
+
+.quote-detail-card h1 {
+  color: #112739;
+  font-size: 28px;
+  margin: 0 0 16px;
+}
+
+.quote-meta {
+  color: #5a6675;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+  margin: 0 0 24px;
+}
+
+.quote-meta span {
+  background: #f5f8fb;
+  border-radius: 999px;
+  padding: 8px 12px;
+}
+
+.quote-detail-card button {
+  border-radius: 999px;
+}
+
+.state-message {
+  color: #17324a;
+  margin: 0;
+}
+
+.state-message--error {
+  color: #b42318;
+}

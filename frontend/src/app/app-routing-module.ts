@@ -35,6 +35,11 @@ const routes: Routes = [
         data: { roles: ['ADMIN', 'AGENT', 'SUPERVISOR'] },
         loadChildren: () => import('./features/sales/sales.module').then((m) => m.SalesModule),
       },
+      {
+        path: 'quotes',
+        data: { roles: ['ADMIN', 'AGENT'] },
+        loadChildren: () => import('./features/quotes/quotes.module').then((m) => m.QuotesModule),
+      },
     ],
   },
   { path: '**', redirectTo: '' },

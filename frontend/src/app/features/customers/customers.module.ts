@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CustomerCategoryTabsComponent } from './components/customer-category-tabs.component';
+import { CreateQuoteDetailsComponent } from './components/create-quote-details.component';
 import { CustomerResultCardComponent } from './components/customer-result-card.component';
 import { CustomerResultListComponent } from './components/customer-result-list.component';
 import { CustomerSearchFormComponent } from './components/customer-search-form.component';
@@ -15,6 +16,7 @@ import { CustomersRoutingModule } from './customers-routing.module';
     CustomersPageComponent,
     CustomerFormPageComponent,
     CustomerDetailPageComponent,
+    CreateQuoteDetailsComponent,
     CustomerSearchFormComponent,
     CustomerSearchSummaryBarComponent,
     CustomerCategoryTabsComponent,

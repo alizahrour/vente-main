@@ -2,7 +2,8 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { Offer, OfferPayload } from '../models/offer.models';
+import { EligibleOfferQuery, Offer, OfferPayload, PageResponse } from '../models/offer.models';
+import { HttpParams } from '@angular/common/http';
 
 @Injectable({ providedIn: 'root' })
 export class OfferService {
@@ -16,6 +17,28 @@ export class OfferService {
 
   getActiveOffers(): Observable<Offer[]> {
     return this.http.get<Offer[]>(`${environment.apiUrl}/offers/active`);
+  }
+
+  getEligibleOffers(query: EligibleOfferQuery): Observable<PageResponse<Offer>> {
+    let params = new HttpParams()
+      .set('quoteId', query.quoteId)
+      .set('page', query.page ?? 0)
+      .set('size', query.size ?? 20);
+
+    if (query.search?.trim()) {
+      params = params.set('search', query.search.trim());
+    }
+    if (query.hierarchyCode?.trim()) {
+      params = params.set('hierarchyCode', query.hierarchyCode.trim());
+    }
+    if (query.productTypeCode?.trim()) {
+      params = params.set('productTypeCode', query.productTypeCode.trim());
+    }
+    if (query.bundle !== null && query.bundle !== undefined) {
+      params = params.set('bundle', query.bundle);
+    }
+
+    return this.http.get<PageResponse<Offer>>(`${environment.apiUrl}/offers/eligible`, { params });
   }
 
   getOffer(id: number): Observable<Offer> {

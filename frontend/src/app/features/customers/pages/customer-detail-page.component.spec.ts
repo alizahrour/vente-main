@@ -2,8 +2,8 @@ import { ComponentFixture, TestBed, fakeAsync, flushMicrotasks } from '@angular/
 import { ActivatedRoute, convertToParamMap } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { of, throwError } from 'rxjs';
+import { QuoteService } from '../../../core/services/quote.service';
 import { CustomerService } from '../../../core/services/customer.service';
-import { SaleService } from '../../../core/services/sale.service';
 import { CustomerDetailPageComponent } from './customer-detail-page.component';
 
 describe('CustomerDetailPageComponent', () => {
@@ -27,7 +27,7 @@ describe('CustomerDetailPageComponent', () => {
           },
         },
         { provide: CustomerService, useValue: customerService },
-        { provide: SaleService, useValue: jasmine.createSpyObj<SaleService>('SaleService', ['createSale']) },
+        { provide: QuoteService, useValue: jasmine.createSpyObj<QuoteService>('QuoteService', ['createQuote']) },
       ],
     })
       .overrideComponent(CustomerDetailPageComponent, { set: { template: '' } })

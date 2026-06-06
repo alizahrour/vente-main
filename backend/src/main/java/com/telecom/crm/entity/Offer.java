@@ -34,13 +34,17 @@ public class Offer extends AuditableEntity {
     private Long id;
 
     @NotBlank
-    @Size(max = 40)
-    @Column(nullable = false, unique = true, length = 40)
+    @Size(max = 80)
+    @Column(nullable = false, unique = true, length = 80)
     private String code;
 
+    @Size(max = 80)
+    @Column(length = 80)
+    private String existingCode;
+
     @NotBlank
-    @Size(max = 120)
-    @Column(nullable = false, length = 120)
+    @Size(max = 255)
+    @Column(nullable = false, length = 255)
     private String name;
 
     @NotNull
@@ -52,8 +56,28 @@ public class Offer extends AuditableEntity {
     @Column(length = 255)
     private String description;
 
+    @Size(max = 80)
+    @Column(length = 80)
+    private String productTypeCode;
+
+    @Size(max = 255)
+    @Column(length = 255)
+    private String productTypeDescription;
+
+    @Size(max = 80)
+    @Column(length = 80)
+    private String brand;
+
+    @Size(max = 80)
+    @Column(length = 80)
+    private String balance;
+
+    @Size(max = 120)
+    @Column(length = 120)
+    private String hierarchyCode;
+
     @NotNull
-    @DecimalMin(value = "0.01")
+    @DecimalMin(value = "0.00")
     @Column(nullable = false, precision = 12, scale = 2)
     private BigDecimal price;
 
@@ -61,6 +85,12 @@ public class Offer extends AuditableEntity {
     @Min(1)
     @Column(nullable = false)
     private Integer duration;
+
+    @Column
+    private Boolean eligibleForNormalCustomer;
+
+    @Column
+    private Boolean bundle;
 
     @Builder.Default
     @Column(nullable = false)

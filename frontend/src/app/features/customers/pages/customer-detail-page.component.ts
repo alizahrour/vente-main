@@ -2,8 +2,9 @@ import { ChangeDetectorRef, Component, NgZone, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { finalize } from 'rxjs';
 import { Customer, CustomerDetailProfile } from '../../../core/models/customer.models';
+import { CreateQuotePayload } from '../../../core/models/quote.models';
 import { CustomerService } from '../../../core/services/customer.service';
-import { SaleService } from '../../../core/services/sale.service';
+import { QuoteService } from '../../../core/services/quote.service';
 
 const DEFAULT_CUSTOMER_PROFILE: CustomerDetailProfile = {
   status: 'Actif',
@@ -44,8 +45,10 @@ const DEFAULT_CUSTOMER_PROFILE: CustomerDetailProfile = {
 export class CustomerDetailPageComponent implements OnInit {
   customer: Customer | null = null;
   loading = true;
-  creatingBasket = false;
+  quoteDialogOpen = false;
+  creatingQuote = false;
   errorMessage = '';
+  quoteErrorMessage = '';
 
   constructor(
     private readonly route: ActivatedRoute,
@@ -53,7 +56,7 @@ export class CustomerDetailPageComponent implements OnInit {
     private readonly ngZone: NgZone,
     private readonly cdr: ChangeDetectorRef,
     private readonly customerService: CustomerService,
-    private readonly saleService: SaleService
+    private readonly quoteService: QuoteService
   ) {}
 
   get profile(): CustomerDetailProfile {
@@ -90,21 +93,42 @@ export class CustomerDetailPageComponent implements OnInit {
     });
   }
 
-  createBasket(): void {
-    if (!this.customer) {
+  openQuoteDialog(): void {
+    this.quoteErrorMessage = '';
+    this.quoteDialogOpen = true;
+  }
+
+  closeQuoteDialog(): void {
+    if (this.creatingQuote) {
       return;
     }
 
-    this.creatingBasket = true;
-    this.errorMessage = '';
-    this.saleService.createSale({ customerId: this.customer.id, items: [] })
-      .pipe(finalize(() => (this.creatingBasket = false)))
-      .subscribe({
-        next: (sale) => this.router.navigate(['/sales', sale.id]),
-        error: (error) => {
-          this.errorMessage = error.error?.message ?? error.message ?? 'Creation du panier impossible.';
-        },
-      });
+    this.quoteDialogOpen = false;
+    this.quoteErrorMessage = '';
+  }
+
+  createQuote(payload: CreateQuotePayload): void {
+    this.deferViewUpdate(() => {
+      this.creatingQuote = true;
+      this.quoteErrorMessage = '';
+      this.cdr.detectChanges();
+
+      this.quoteService.createQuote(payload)
+        .pipe(finalize(() => {
+          this.creatingQuote = false;
+          this.cdr.detectChanges();
+        }))
+        .subscribe({
+          next: (quote) => {
+            this.quoteDialogOpen = false;
+            this.router.navigate(['/quotes', quote.id, 'catalog']);
+          },
+          error: (error) => {
+            this.quoteErrorMessage = error.error?.message ?? error.message ?? 'Creation du panier impossible.';
+            this.cdr.detectChanges();
+          },
+        });
+    });
   }
 
   private deferViewUpdate(callback: () => void): void {

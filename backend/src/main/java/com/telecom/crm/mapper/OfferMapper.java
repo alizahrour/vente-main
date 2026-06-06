@@ -11,11 +11,19 @@ public class OfferMapper {
         return new OfferResponse(
                 offer.getId(),
                 offer.getCode(),
+                offer.getExistingCode(),
                 offer.getName(),
                 offer.getCategory(),
                 offer.getDescription(),
+                offer.getProductTypeCode(),
+                offer.getProductTypeDescription(),
+                offer.getBrand(),
+                offer.getBalance(),
+                offer.getHierarchyCode(),
                 offer.getPrice(),
                 offer.getDuration(),
+                Boolean.TRUE.equals(offer.getEligibleForNormalCustomer()),
+                Boolean.TRUE.equals(offer.getBundle()),
                 offer.isActive()
         );
     }
